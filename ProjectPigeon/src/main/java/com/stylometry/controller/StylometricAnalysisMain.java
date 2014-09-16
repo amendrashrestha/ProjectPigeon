@@ -61,7 +61,7 @@ import org.json.simple.JSONObject;
  */
 public class StylometricAnalysisMain {
 
-    private Set<String> functionWords;			// Contains the function words we are using
+    private List<String> functionWords;			// Contains the function words we are using
     private List<Alias> aliases;				// The aliases we are interested in to compare        
     private List<List<Float>> featVectorForAllAliases;
 
@@ -111,10 +111,10 @@ public class StylometricAnalysisMain {
     private void writeToJSONFile(JSONObject obj) {
         try {
             String filename = "data.json";
-            String filePath = "/Users/amendrashrestha/NetBeansProjects/Stylometry/StylometryWithGraph/src/main/webapp/utilities" + File.separator + filename;
+            String filePath = "/Users/amendrashrestha/NetBeansProjects/ProjectPigeon/ProjectPigeon/src/main/webapp/utilities" + File.separator + filename;
 
             FileWriter file = new FileWriter(filePath);
-                
+
             file.write(obj.toJSONString());
             file.flush();
 
@@ -193,15 +193,19 @@ public class StylometricAnalysisMain {
      * @param path
      */
     private void loadFunctionWords(String path) {
-        functionWords = new LinkedHashSet<>();
+        functionWords = new ArrayList<>();
         BufferedReader br;
         try {
-            String newPath = System.getProperty("user.home") + File.separator + path;
-            br = new BufferedReader(new FileReader(newPath));
+            path = System.getProperty("user.home") + File.separator + path;
+            System.out.println(path);
+            br = new BufferedReader(new FileReader(path));
 
             String strLine;
             while ((strLine = br.readLine()) != null) {
-                functionWords.add(strLine);
+                String trimmedLine = strLine.trim();
+                if (!"".equals(trimmedLine)) {
+                    functionWords.add(trimmedLine.trim());
+                }
             }
             br.close();
         } catch (Exception e) {
@@ -217,13 +221,16 @@ public class StylometricAnalysisMain {
      */
     public ArrayList<Float> countFunctionWords(List<String> words) {
         ArrayList<Float> tmpCounter = new ArrayList<>(Collections.nCopies(functionWords.size(), 0.0f));	// Initialize to zero
-        for (int i = 0; i < words.size(); i++) {
-            String word = words.get(i).toLowerCase();
-            //System.out.println(word);
-            if (functionWords.contains(word)) {
-                float value = tmpCounter.get(i);
-                value++;
-                tmpCounter.set(i, value);
+
+        for (String word1 : words) {
+            String word = word1.toLowerCase();
+            for (int j = 0; j < functionWords.size(); j++) {
+                if (word.equals(functionWords.get(j))) {
+                    float value = tmpCounter.get(j);
+                    value++;
+                    tmpCounter.set(j, value);
+                    break;
+                }
             }
         }
         // "Normalize" the values by dividing with length of the post (nr of words in the post)
@@ -388,10 +395,18 @@ public class StylometricAnalysisMain {
         // Calculate each part of the "feature vector" for each individual post
         for (String post : user.getPosts()) {
             List<String> wordsInPost = extractWords(post);
+            int placeInFeatureVector = 0;
+
+            placeInFeatureVector = countFunctionWords(wordsInPost).size();
+
             user.addToFeatureVectorPostList(countFunctionWords(wordsInPost), 0, cnt);
-            user.addToFeatureVectorPostList(countWordLengths(wordsInPost), 293, cnt);
-            user.addToFeatureVectorPostList(countCharactersAZ(post), 313, cnt);
-            user.addToFeatureVectorPostList(countSpecialCharacters(post), 339, cnt);
+            user.addToFeatureVectorPostList(countWordLengths(wordsInPost), placeInFeatureVector, cnt);
+
+            placeInFeatureVector = placeInFeatureVector + countWordLengths(wordsInPost).size();
+            user.addToFeatureVectorPostList(countCharactersAZ(post), placeInFeatureVector, cnt);
+
+            placeInFeatureVector = placeInFeatureVector + countSpecialCharacters(post).size();
+            user.addToFeatureVectorPostList(countSpecialCharacters(post), placeInFeatureVector, cnt);
             cnt++;
             //   }
 
