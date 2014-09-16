@@ -4,9 +4,9 @@ package com.stylometry.controller;
  *
  * @author ITE
  */
-import com.projectpegion.IOHandler.IOProperties;
-import com.projectpegion.IOHandler.IOReadWrite;
-import com.projectpegion.model.Alias;
+import com.stylometry.IOHandler.IOProperties;
+import com.stylometry.IOHandler.IOReadWrite;
+import com.stylometry.model.Alias;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;

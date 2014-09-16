@@ -4,7 +4,7 @@
  */
 package com.stylometry.IOHandler;
 
-import com.projectpegion.model.Alias;
+import com.stylometry.model.Alias;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
