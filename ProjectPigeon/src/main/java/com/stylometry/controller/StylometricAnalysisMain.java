@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.BreakIterator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -178,12 +179,9 @@ public class StylometricAnalysisMain {
      * @return
      */
     public static List<String> extractWords(String text) {
-        List<String> wordList = new ArrayList<>();
+        List<String> wordList = new ArrayList<String>();
         String[] words = text.split("\\s+");
-        for (int i = 0; i < words.length; i++) {
-            words[i] = words[i].replaceAll("[^\\w]", "");
-            wordList.add(words[i]);
-        }
+        wordList.addAll(Arrays.asList(words)); // words[i] = words[i].replaceAll("[^\\w]", "");
         return wordList;
     }
 
@@ -222,15 +220,12 @@ public class StylometricAnalysisMain {
     public ArrayList<Float> countFunctionWords(List<String> words) {
         ArrayList<Float> tmpCounter = new ArrayList<>(Collections.nCopies(functionWords.size(), 0.0f));	// Initialize to zero
 
-        for (String word1 : words) {
-            String word = word1.toLowerCase();
-            for (int j = 0; j < functionWords.size(); j++) {
-                if (word.equals(functionWords.get(j))) {
-                    float value = tmpCounter.get(j);
-                    value++;
-                    tmpCounter.set(j, value);
-                    break;
-                }
+        for (int i = 0; i < words.size(); i++) {
+            if (functionWords.contains(words.get(i))) {
+                int place = functionWords.indexOf(words.get(i));
+                float value = tmpCounter.get(place);
+                value++;
+                tmpCounter.set(place, value);
             }
         }
         // "Normalize" the values by dividing with length of the post (nr of words in the post)
@@ -445,10 +440,18 @@ public class StylometricAnalysisMain {
             // Calculate each part of the "feature vector" for each individual post
             for (String post : alias.getPosts()) {
                 List<String> wordsInPost = extractWords(post);
+                int placeInFeatureVector = 0;
+
+                placeInFeatureVector = countFunctionWords(wordsInPost).size();
+
                 alias.addToFeatureVectorPostList(countFunctionWords(wordsInPost), 0, cnt);
-                alias.addToFeatureVectorPostList(countWordLengths(wordsInPost), 293, cnt);
-                alias.addToFeatureVectorPostList(countCharactersAZ(post), 313, cnt);
-                alias.addToFeatureVectorPostList(countSpecialCharacters(post), 339, cnt);
+                alias.addToFeatureVectorPostList(countWordLengths(wordsInPost), placeInFeatureVector, cnt);
+
+                placeInFeatureVector = placeInFeatureVector + countWordLengths(wordsInPost).size();
+                alias.addToFeatureVectorPostList(countCharactersAZ(post), placeInFeatureVector, cnt);
+
+                placeInFeatureVector = placeInFeatureVector + countSpecialCharacters(post).size();
+                alias.addToFeatureVectorPostList(countSpecialCharacters(post), placeInFeatureVector, cnt);
                 cnt++;
             }
 
@@ -481,10 +484,18 @@ public class StylometricAnalysisMain {
             // Calculate each part of the "feature vector" for each individual post
             for (String post : alias.getPosts()) {
                 List<String> wordsInPost = extractWords(post);
+                int placeInFeatureVector = 0;
+
+                placeInFeatureVector = countFunctionWords(wordsInPost).size();
+
                 alias.addToFeatureVectorPostList(countFunctionWords(wordsInPost), 0, cnt);
-                alias.addToFeatureVectorPostList(countWordLengths(wordsInPost), 293, cnt);
-                alias.addToFeatureVectorPostList(countCharactersAZ(post), 313, cnt);
-                alias.addToFeatureVectorPostList(countSpecialCharacters(post), 339, cnt);
+                alias.addToFeatureVectorPostList(countWordLengths(wordsInPost), placeInFeatureVector, cnt);
+
+                placeInFeatureVector = placeInFeatureVector + countWordLengths(wordsInPost).size();
+                alias.addToFeatureVectorPostList(countCharactersAZ(post), placeInFeatureVector, cnt);
+
+                placeInFeatureVector = placeInFeatureVector + countSpecialCharacters(post).size();
+                alias.addToFeatureVectorPostList(countSpecialCharacters(post), placeInFeatureVector, cnt);
                 cnt++;
             }
 
