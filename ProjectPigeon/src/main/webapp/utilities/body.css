@@ -9,7 +9,7 @@ and open the template in the editor.
 */
 
 body {
-	margin: 20px;
+	margin: 40px;
 	padding: 0;
 	color: #000;
 	font-family: Tahoma, Geneva, sans-serif;
@@ -19,4 +19,50 @@ body {
 
 #txtForm {
     margin: 20px;
+}
+
+nav{
+  padding-left: 800px;
+}
+nav ul ul{
+    float: left;
+    display: none;
+}
+nav ul li:hover > ul{
+    display: block;
+}
+
+nav ul li{
+    float: right;
+}
+
+nav ul li a{
+    display: block; padding: 5px 10px;   
+    text-decoration: none;
+}
+
+nav ul{
+    padding: 0 10px;
+    border-radius: 10px;
+    list-style: none;
+    position: relative;
+    display: inline-table;
+    box-shadow: 0px 0px 9px rgba(0,0,0,0.15);
+}
+
+nav ul:after{
+    content: ""; clear: both; display: block;
+}
+
+nav ul ul{
+    position: absolute; top: 100%;
+}
+
+nav ul ul li{
+    float: none;
+    position: relative;
+}
+
+nav ul ul ul{
+    position: absolute; left: 100%; top: 0;
 }

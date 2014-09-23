@@ -7,23 +7,42 @@
         <script type="text/javascript" src="utilities/highcharts.js"></script>
     </head>
     <body>
-        <table>
-            <tr>
-                <td>
-                    <div id = "txtForm">
-                        <form action="rest/generic/returnStylometricJSON" method="post">
-                            <textarea name="posts" ROWS="15" COLS="100" onclick="this.value = '';">This is a little test.</textarea>
-                            <input type="submit" value="Submit">
-                        </form>
-                    </div>
-                </td>
-            </tr>
-        </table>
-
+        <div>
+            <nav>
+                <ul>
+                    <li><a href="#">Display</a>
+                        <ul>
+                            <li><a href="#">Time</li></a>
+                            <li><a href="#">Stylometry</li></a>
+                        </ul>
+                    </li>
+                    <li><a href="#">Compare</a>
+                        <ul>
+                            <li><a href="#">Time</li></a>
+                            <li><a href="#">Stylometry</li></a>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div>
+            <table>
+                <tr>
+                    <td>
+                        <div id = "txtForm">
+                            <form action="rest/generic/returnStylometricJSON" method="post">
+                                <textarea name="posts" ROWS="15" COLS="100" onclick="this.value = '';">This is a little test.</textarea>
+                                <input type="submit" value="Submit" id="submit">
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
 
         <div id = "container" style= "height: 400px">
             <script type="text/javascript">
-                $(document).ready(function () {
+                $("#loadChart").ready(function () {
 
                     var options = {
                         chart: {
@@ -32,7 +51,6 @@
                         },
                         series: [{}]
                     };
-
                     $.getJSON("utilities/data.json", function (data) {
                         var result = [];
                         for (var i in data)

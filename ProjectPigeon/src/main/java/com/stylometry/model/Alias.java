@@ -28,7 +28,7 @@ public class Alias {
     }
 
     public Alias() {
-        setNrOfFeatures(448);
+        setNrOfFeatures(360);
     }
 
     @Override
@@ -77,10 +77,10 @@ public class Alias {
     }
 
     public void addToFeatureVectorPostList(ArrayList<Float> freqDist, int startIndex, int index) {
-        for (int i = 0; i < freqDist.size(); i++) {
-            featureVectorPostList.get(index).set(startIndex, freqDist.get(i));
-            startIndex++;
-        }
+         for (Float freqDist1 : freqDist) {
+             featureVectorPostList.get(index).set(startIndex, freqDist1);
+             startIndex++;
+         }
     }
 
     public List<Float> getFeatureVector() {

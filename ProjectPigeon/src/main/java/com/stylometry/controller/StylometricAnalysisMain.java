@@ -112,6 +112,7 @@ public class StylometricAnalysisMain {
     private void writeToJSONFile(JSONObject obj) {
         try {
             String filename = "data.json";
+            System.out.println("UserPath" + System.getProperty("user.home"));
             String filePath = "/Users/amendrashrestha/NetBeansProjects/ProjectPigeon/ProjectPigeon/src/main/webapp/utilities" + File.separator + filename;
 
             FileWriter file = new FileWriter(filePath);
@@ -219,10 +220,9 @@ public class StylometricAnalysisMain {
      */
     public ArrayList<Float> countFunctionWords(List<String> words) {
         ArrayList<Float> tmpCounter = new ArrayList<>(Collections.nCopies(functionWords.size(), 0.0f));	// Initialize to zero
-
-        for (int i = 0; i < words.size(); i++) {
-            if (functionWords.contains(words.get(i))) {
-                int place = functionWords.indexOf(words.get(i));
+        for (String word : words) {
+            if (functionWords.contains(word)) {
+                int place = functionWords.indexOf(word);
                 float value = tmpCounter.get(place);
                 value++;
                 tmpCounter.set(place, value);
@@ -252,6 +252,9 @@ public class StylometricAnalysisMain {
         }
         // "Normalize" the values by dividing with total nr of characters in the post (excluding white spaces)
         int length = post.replaceAll(" ", "").length();
+        if (0 == length){
+            length = 1;
+        }
         for (int i = 0; i < tmpCounter.size(); i++) {
             tmpCounter.set(i, tmpCounter.get(i) / (float) length);
         }
@@ -274,6 +277,9 @@ public class StylometricAnalysisMain {
         }
         // "Normalize" the values by dividing with total nr of characters in the post (excluding whitespaces)
         int length = post.replaceAll(" ", "").length();
+        if (0 == length){
+            length = 1;
+        }
         for (int i = 0; i < tmpCounter.size(); i++) {
             tmpCounter.set(i, tmpCounter.get(i) / (float) length);
         }
@@ -390,19 +396,24 @@ public class StylometricAnalysisMain {
         // Calculate each part of the "feature vector" for each individual post
         for (String post : user.getPosts()) {
             List<String> wordsInPost = extractWords(post);
-            int placeInFeatureVector = 0;
+                int placeInFeatureVector = 0;
 
-            placeInFeatureVector = countFunctionWords(wordsInPost).size();
-
-            user.addToFeatureVectorPostList(countFunctionWords(wordsInPost), 0, cnt);
-            user.addToFeatureVectorPostList(countWordLengths(wordsInPost), placeInFeatureVector, cnt);
-
-            placeInFeatureVector = placeInFeatureVector + countWordLengths(wordsInPost).size();
-            user.addToFeatureVectorPostList(countCharactersAZ(post), placeInFeatureVector, cnt);
-
-            placeInFeatureVector = placeInFeatureVector + countSpecialCharacters(post).size();
-            user.addToFeatureVectorPostList(countSpecialCharacters(post), placeInFeatureVector, cnt);
-            cnt++;
+                placeInFeatureVector = countFunctionWords(wordsInPost).size();
+                System.out.println("FunctionWOrdSize: " + placeInFeatureVector);
+                user.addToFeatureVectorPostList(countFunctionWords(wordsInPost), 0, cnt);
+                
+                user.addToFeatureVectorPostList(countWordLengths(wordsInPost), placeInFeatureVector, cnt);
+                placeInFeatureVector = placeInFeatureVector + countWordLengths(wordsInPost).size();
+                System.out.println("WordLengthSize: " + placeInFeatureVector);
+                
+                user.addToFeatureVectorPostList(countCharactersAZ(post), placeInFeatureVector, cnt);
+                placeInFeatureVector = placeInFeatureVector + countCharactersAZ(post).size();
+                System.out.println("DigitNCharacters: " + placeInFeatureVector);
+                
+                user.addToFeatureVectorPostList(countSpecialCharacters(post), placeInFeatureVector, cnt);
+                placeInFeatureVector = placeInFeatureVector + countSpecialCharacters(post).size();
+                System.out.println("Special Character: " + placeInFeatureVector);
+                cnt++;
             //   }
 
             ArrayList<ArrayList<Float>> featureVectorList = user.getFeatureVectorPosList();
