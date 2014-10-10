@@ -9,12 +9,24 @@ and open the template in the editor.
 */
 
 body {
-	margin: 40px;
-	padding: 0;
-	color: #000;
-	font-family: Tahoma, Geneva, sans-serif;
-	font-size: 13px;
-	line-height: 1.7em; 
+    margin: 40px;
+    padding: 20px 100px 0px 100px;
+    color: #000;
+    font-family: Tahoma, Geneva, sans-serif;
+    font-size: 13px;
+    line-height: 1.7em; 
+}
+
+h1{
+    padding: 10px 0;
+    font-size: 20px;
+    color: #AA4643;
+}
+
+h2{
+    padding: 10px 0;
+    font-size: 15px;
+    color: #AA4643;
 }
 
 #txtForm {
@@ -22,10 +34,10 @@ body {
 }
 
 nav{
-  padding-left: 800px;
+    padding: 0;
 }
 nav ul ul{
-    float: left;
+    float: right;
     display: none;
 }
 nav ul li:hover > ul{
@@ -65,4 +77,14 @@ nav ul ul li{
 
 nav ul ul ul{
     position: absolute; left: 100%; top: 0;
+}
+
+#logo{
+    float: right;
+    display: block;
+    padding-left: 20px;
+}
+
+#styloContainer{
+    padding-top: 20px;
 }

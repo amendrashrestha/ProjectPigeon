@@ -493,7 +493,7 @@
             }
         },
         title: {
-            text: "Stylometry",
+            text: "Chart Title",
             align: "center",
             margin: 15,
             style: {

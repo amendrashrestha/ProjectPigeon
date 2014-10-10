@@ -12,20 +12,19 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.json.JSONArray;
 import org.json.simple.JSONObject;
 
 /**
@@ -80,38 +79,105 @@ public class StylometricAnalysisMain {
         System.out.println(filepath);
     }
 
-    public List<Float> executeAnalysis(String ID) throws IOException, SQLException {
-        IOReadWrite ioRW = new IOReadWrite();
+    public void executeAnalysis(String ID) throws IOException, SQLException {
+        //IOReadWrite ioRW = new IOReadWrite();
         Alias user = new Alias();
-        String tempBasePath = IOProperties.INDIVIDUAL_USER_FILE_PATH;
+        String styloJSONfilename = "stylo.json";
+        String timeJSONfilename = "timeSeries.json";
+        /*String tempBasePath = IOProperties.INDIVIDUAL_USER_FILE_PATH;
         String basePath = getClass().getResource("../../../../").getFile() + tempBasePath;
         String ext = IOProperties.USER_FILE_EXTENSION;
 
-        user = ioRW.convertTxtFileToAliasObj(basePath, ID, ext);
+        user = ioRW.convertTxtFileToAliasObj(basePath, ID, ext);*/
+        ArrayList post = getUserPost(ID);
+        user.setPosts(post);
+        ArrayList time = getUserPostTime(ID);
+        user.setPostTime(time);
+
         List<Float> freatuteVector = createFeatureVectors(user);
-        return freatuteVector;
+        List<Float> timeFeatureVector = createTimeFeatureVectors(user);
+        
+        returnJSONfile(freatuteVector, styloJSONfilename);
+        returnJSONfile(timeFeatureVector, timeJSONfilename);
+        //return featureObject;
     }
 
+    private ArrayList getUserPost(String Id) throws SQLException {
+        ArrayList userPosts = new ArrayList();
+        ResultSet result = null;
+        Statement stmt = null;
+        Connection conn = null;
+
+        try {
+            Class c = Class.forName("com.mysql.jdbc.Driver");
+            conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:8889/twitter_stream",
+                    "root", "root");
+            String query = "select Text from twitter_data_view where User_ID = " + Id;
+            stmt = conn.createStatement();
+            result = stmt.executeQuery(query);
+
+            while (result.next()) {
+                String post = result.getString("Text");
+                userPosts.add(post);
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            System.out.println("Error!!!!!!" + e);
+        } finally {
+            if (null != conn) {
+                conn.close();
+            }
+        }
+        return userPosts;
+    }
+
+    private ArrayList getUserPostTime(String Id) throws SQLException {
+        ArrayList userPostsTime = new ArrayList();
+        ResultSet result = null;
+        Statement stmt = null;
+        Connection conn = null;
+
+        try {
+            Class c = Class.forName("com.mysql.jdbc.Driver");
+            conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:8889/twitter_stream",
+                    "root", "root");
+            String query = "select Created_at from twitter_data_view where User_ID = " + Id;
+            stmt = conn.createStatement();
+            result = stmt.executeQuery(query);
+
+            while (result.next()) {
+                String postTime = result.getString("Created_at");
+                userPostsTime.add(postTime);
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            System.out.println("Error!!!!!!" + e);
+        } finally {
+            if (null != conn) {
+                conn.close();
+            }
+        }
+        return userPostsTime;
+    }
+    
     public JSONObject executePostAnalysis(List posts) throws IOException {
+        String filename = "stylo.json";
         Alias user = new Alias();
         user.setPosts(posts);
         List<Float> freatuteVector = createFeatureVectors(user);
-        JSONObject featureObject = returnJSONfile(freatuteVector);
+        JSONObject featureObject = returnJSONfile(freatuteVector, filename);
         return featureObject;
     }
 
-    private JSONObject returnJSONfile(List<Float> freatuteVector) {
+    private JSONObject returnJSONfile(List<Float> freatuteVector, String filename) {
         JSONObject obj = new JSONObject();
         for (int i = 0; i < freatuteVector.size(); i++) {
             obj.put(i, freatuteVector.get(i));
         }
-        writeToJSONFile(obj);
+        writeToJSONFile(obj, filename);
         return obj;
     }
 
-    private void writeToJSONFile(JSONObject obj) {
+    private void writeToJSONFile(JSONObject obj, String filename) {
         try {
-            String filename = "data.json";
             System.out.println("UserPath" + System.getProperty("user.home"));
             String filePath = "/Users/amendrashrestha/NetBeansProjects/ProjectPigeon/ProjectPigeon/src/main/webapp/utilities" + File.separator + filename;
 
@@ -252,7 +318,7 @@ public class StylometricAnalysisMain {
         }
         // "Normalize" the values by dividing with total nr of characters in the post (excluding white spaces)
         int length = post.replaceAll(" ", "").length();
-        if (0 == length){
+        if (0 == length) {
             length = 1;
         }
         for (int i = 0; i < tmpCounter.size(); i++) {
@@ -277,7 +343,7 @@ public class StylometricAnalysisMain {
         }
         // "Normalize" the values by dividing with total nr of characters in the post (excluding whitespaces)
         int length = post.replaceAll(" ", "").length();
-        if (0 == length){
+        if (0 == length) {
             length = 1;
         }
         for (int i = 0; i < tmpCounter.size(); i++) {
@@ -380,6 +446,22 @@ public class StylometricAnalysisMain {
         }
         return count;
     }
+    
+    /**
+     * return time feature vector of each user
+     * @param user
+     * @return 
+     */
+    private List<Float> createTimeFeatureVectors(Alias user) {
+        List<Float> timeFeatureVector = new ArrayList<>();
+        List postTimeVector = new ArrayList();
+        
+//        for(String postTime : user.getPostTime()){
+//            
+//        }
+        
+        return timeFeatureVector;
+    }
 
     /**
      * Loops through all aliases and construct their feature vectors
@@ -396,24 +478,24 @@ public class StylometricAnalysisMain {
         // Calculate each part of the "feature vector" for each individual post
         for (String post : user.getPosts()) {
             List<String> wordsInPost = extractWords(post);
-                int placeInFeatureVector = 0;
+            int placeInFeatureVector = 0;
 
-                placeInFeatureVector = countFunctionWords(wordsInPost).size();
-                System.out.println("FunctionWOrdSize: " + placeInFeatureVector);
-                user.addToFeatureVectorPostList(countFunctionWords(wordsInPost), 0, cnt);
-                
-                user.addToFeatureVectorPostList(countWordLengths(wordsInPost), placeInFeatureVector, cnt);
-                placeInFeatureVector = placeInFeatureVector + countWordLengths(wordsInPost).size();
-                System.out.println("WordLengthSize: " + placeInFeatureVector);
-                
-                user.addToFeatureVectorPostList(countCharactersAZ(post), placeInFeatureVector, cnt);
-                placeInFeatureVector = placeInFeatureVector + countCharactersAZ(post).size();
-                System.out.println("DigitNCharacters: " + placeInFeatureVector);
-                
-                user.addToFeatureVectorPostList(countSpecialCharacters(post), placeInFeatureVector, cnt);
-                placeInFeatureVector = placeInFeatureVector + countSpecialCharacters(post).size();
-                System.out.println("Special Character: " + placeInFeatureVector);
-                cnt++;
+            placeInFeatureVector = countFunctionWords(wordsInPost).size();
+            System.out.println("FunctionWOrdSize: " + placeInFeatureVector);
+            user.addToFeatureVectorPostList(countFunctionWords(wordsInPost), 0, cnt);
+
+            user.addToFeatureVectorPostList(countWordLengths(wordsInPost), placeInFeatureVector, cnt);
+            placeInFeatureVector = placeInFeatureVector + countWordLengths(wordsInPost).size();
+            System.out.println("WordLengthSize: " + placeInFeatureVector);
+
+            user.addToFeatureVectorPostList(countCharactersAZ(post), placeInFeatureVector, cnt);
+            placeInFeatureVector = placeInFeatureVector + countCharactersAZ(post).size();
+            System.out.println("DigitNCharacters: " + placeInFeatureVector);
+
+            user.addToFeatureVectorPostList(countSpecialCharacters(post), placeInFeatureVector, cnt);
+            placeInFeatureVector = placeInFeatureVector + countSpecialCharacters(post).size();
+            System.out.println("Special Character: " + placeInFeatureVector);
+            cnt++;
             //   }
 
             ArrayList<ArrayList<Float>> featureVectorList = user.getFeatureVectorPosList();

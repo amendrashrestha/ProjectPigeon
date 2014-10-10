@@ -132,7 +132,7 @@ public class Alias {
         return rr;
     }
 
-    public static double[] getTimeVectorArray(List postTime) throws SQLException {
+    public double[] getTimeVectorArray(List postTime) throws SQLException {
 
         double[] rr = new double[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};

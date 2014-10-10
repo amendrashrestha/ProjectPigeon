@@ -1,6 +1,7 @@
 <html>
     <head>
-        <title>Stylometry Analysis</title>
+        <title>Alias Sensor</title>
+        <link rel="stylesheet" type="text/css" href="utilities/reset.css">
         <link rel="stylesheet" type="text/css" href="utilities/body.css">
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
         <script type="text/javascript" src="utilities/json2.js"></script>
@@ -8,64 +9,30 @@
     </head>
     <body>
         <div>
-            <nav>
-                <ul>
-                    <li><a href="#">Display</a>
-                        <ul>
-                            <li><a href="#">Time</li></a>
-                            <li><a href="#">Stylometry</li></a>
-                        </ul>
-                    </li>
-                    <li><a href="#">Compare</a>
-                        <ul>
-                            <li><a href="#">Time</li></a>
-                            <li><a href="#">Stylometry</li></a>
-                        </ul>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-        <div>
-            <table>
-                <tr>
-                    <td>
-                        <div id = "txtForm">
-                            <form action="rest/generic/returnStylometricJSON" method="post">
-                                <textarea name="posts" ROWS="15" COLS="100" onclick="this.value = '';">This is a little test.</textarea>
-                                <input type="submit" value="Submit" id="submit">
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-        </div>
+            <div>
+                <nav>
+                    <ul>
+                        <li><a href="index.jsp">Home</a></li>
+                        <li><a href="English.jsp">English</a></li>
+                        <li><a href="Swedish.jsp">Swedish</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div id="container">
+                <p>
+                    <img id="logo" src = "utilities/LogoHome1.png">
+                <h1>Alias Sensor</h1>
+                    Why do people fall into this trap? For one thing, humans are lazy. They often seek a simple fix for a complex problem. After all, doesn?t it seem easier to ?eat like a caveman? than to carefully monitor their daily diet with what they have in the fridge already?
 
-        <div id = "container" style= "height: 400px">
-            <script type="text/javascript">
-                $("#loadChart").ready(function () {
+                    But for any fixes to be sustainable, we must seek hard evidence.  Let?s remember what we?re really trying to accomplish and make sure that whatever we?re buying into, it?s going to help us get there. The Paleo diet sounds intriguing ? and parts of it might even be right ? but don?t you think it makes sense to see how it actually did in practice? Not what we wish, or assume, it would do, but what it actually did.
 
-                    var options = {
-                        chart: {
-                            renderTo: 'container',
-                            type: 'spline'
-                        },
-                        series: [{}]
-                    };
-                    $.getJSON("utilities/data.json", function (data) {
-                        var result = [];
-                        for (var i in data)
-                            result.push([i, data[i]]);
-
-                        options.series[0].data = result;
-                        var chart = new Highcharts.Chart(options);
-                    });
-
-                    // $.getJSON('utilities/data.json', function (data) {
-                    //  options.series[0].data = data;
-                    //  var chart = new Highcharts.Chart(options);
-                    //  });
-                });
-            </script>
+                    Same for health care spending. It sounds like a good idea to have more resources for health care, more hospital beds, more specialists. But it turns out that those things don?t actually produce what we really care about ? actual health care outcomes.
+                    <h2>Stylometry</h2>
+                    Same for health care spending. It sounds like a good idea to have more resources for health care, more hospital beds, more specialists. But it turns out that those things don?t actually produce what we really care about ? actual health care outcomes.
+                    <h2>Time</h2>
+                    Same for health care spending. It sounds like a good idea to have more resources for health care, more hospital beds, more specialists. But it turns out that those things don?t actually produce what we really care about ? actual health care outcomes.
+                </p>
+            </div>
         </div>
     </body>
 </html>
