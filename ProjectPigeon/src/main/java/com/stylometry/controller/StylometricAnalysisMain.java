@@ -7,6 +7,8 @@ package com.stylometry.controller;
 import com.stylometry.IOHandler.IOProperties;
 import com.stylometry.IOHandler.IOReadWrite;
 import com.stylometry.model.Alias;
+import com.stylometry.model.Posts;
+import com.stylometry.model.User;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -64,13 +66,14 @@ public class StylometricAnalysisMain {
     private List<String> functionWords;			// Contains the function words we are using
     private List<Alias> aliases;				// The aliases we are interested in to compare        
     private List<List<Float>> featVectorForAllAliases;
+    IOReadWrite io;
 
     public StylometricAnalysisMain() {
         super();
-        loadFunctionWords(IOProperties.FUNCTION_WORDS);
+        loadFunctionWords(IOProperties.FUNCTION_WORDS_PATH);
         //loadDataFile(IOProperties.INDIVIDUAL_USER_FILE_PATH);
-        System.out.println("This is testing from constructor");
         aliases = new ArrayList<>();
+        io = new IOReadWrite();
     }
 
     private void loadDataFile(String path) {
@@ -79,30 +82,50 @@ public class StylometricAnalysisMain {
         System.out.println(filepath);
     }
 
-    public void executeAnalysis(String ID) throws IOException, SQLException {
-        //IOReadWrite ioRW = new IOReadWrite();
-        Alias user = new Alias();
+    public void executeAnalysis(int ID) throws IOException, SQLException {
+        Alias alias = new Alias();
         String styloJSONfilename = "stylo.json";
         String timeJSONfilename = "timeSeries.json";
-        /*String tempBasePath = IOProperties.INDIVIDUAL_USER_FILE_PATH;
-        String basePath = getClass().getResource("../../../../").getFile() + tempBasePath;
-        String ext = IOProperties.USER_FILE_EXTENSION;
 
-        user = ioRW.convertTxtFileToAliasObj(basePath, ID, ext);*/
-        ArrayList post = getUserPost(ID);
-        user.setPosts(post);
-        ArrayList time = getUserPostTime(ID);
-        user.setPostTime(time);
+        User user = io.getUsersAsObject(ID);
 
-        List<Float> freatuteVector = createFeatureVectors(user);
-        List<Float> timeFeatureVector = createTimeFeatureVectors(user);
-        
+        List userPosts = new ArrayList();
+        List userPostTime = new ArrayList();
+
+        for (Posts posts : user.getUserPost()) {
+            String post = posts.getContent();
+            String postTime = posts.getTime();
+            userPosts.add(post);
+            userPostTime.add(postTime);
+        }
+        alias.setPosts(userPosts);
+
+        List<Float> freatuteVector = createFeatureVectors(alias);
+        int[] tempTimeFeatureVector = alias.getTimeVector(userPostTime);
+        double[] timeFeatureVector = normalizedFeatureVector(tempTimeFeatureVector);
+
         returnJSONfile(freatuteVector, styloJSONfilename);
         returnJSONfile(timeFeatureVector, timeJSONfilename);
-        //return featureObject;
     }
 
-    private ArrayList getUserPost(String Id) throws SQLException {
+    double[] normalizedFeatureVector(int[] featureVector) {
+        double[] normFeatureVector = new double[24];
+        double total = 0;
+
+        for (int time : featureVector) {
+            total += time;
+        }
+
+        for (int i = 0; i < featureVector.length; i++) {
+            int j = featureVector[i];
+
+            normFeatureVector[i] = j / total;
+        }
+
+        return normFeatureVector;
+    }
+
+    private ArrayList getUserPostSQL(String Id) throws SQLException {
         ArrayList userPosts = new ArrayList();
         ResultSet result = null;
         Statement stmt = null;
@@ -130,8 +153,8 @@ public class StylometricAnalysisMain {
         return userPosts;
     }
 
-    private ArrayList getUserPostTime(String Id) throws SQLException {
-        ArrayList userPostsTime = new ArrayList();
+    private ArrayList getUserPostTimeSQL(String Id) throws SQLException {
+        ArrayList<String> userPostsTime = new ArrayList();
         ResultSet result = null;
         Statement stmt = null;
         Connection conn = null;
@@ -146,7 +169,9 @@ public class StylometricAnalysisMain {
 
             while (result.next()) {
                 String postTime = result.getString("Created_at");
-                userPostsTime.add(postTime);
+                System.out.println(postTime);
+                String time = postTime.substring(11, 13);
+                userPostsTime.add(time);
             }
         } catch (ClassNotFoundException | SQLException e) {
             System.out.println("Error!!!!!!" + e);
@@ -157,7 +182,7 @@ public class StylometricAnalysisMain {
         }
         return userPostsTime;
     }
-    
+
     public JSONObject executePostAnalysis(List posts) throws IOException {
         String filename = "stylo.json";
         Alias user = new Alias();
@@ -170,7 +195,16 @@ public class StylometricAnalysisMain {
     private JSONObject returnJSONfile(List<Float> freatuteVector, String filename) {
         JSONObject obj = new JSONObject();
         for (int i = 0; i < freatuteVector.size(); i++) {
-            obj.put(i, freatuteVector.get(i));
+            obj.put(i + 1, freatuteVector.get(i));
+        }
+        writeToJSONFile(obj, filename);
+        return obj;
+    }
+
+    private JSONObject returnJSONfile(double[] freatuteVector, String filename) {
+        JSONObject obj = new JSONObject();
+        for (int i = 0; i < freatuteVector.length; i++) {
+            obj.put(i + 1, freatuteVector[i]);
         }
         writeToJSONFile(obj, filename);
         return obj;
@@ -261,8 +295,6 @@ public class StylometricAnalysisMain {
         functionWords = new ArrayList<>();
         BufferedReader br;
         try {
-            path = System.getProperty("user.home") + File.separator + path;
-            System.out.println(path);
             br = new BufferedReader(new FileReader(path));
 
             String strLine;
@@ -445,22 +477,6 @@ public class StylometricAnalysisMain {
             }
         }
         return count;
-    }
-    
-    /**
-     * return time feature vector of each user
-     * @param user
-     * @return 
-     */
-    private List<Float> createTimeFeatureVectors(Alias user) {
-        List<Float> timeFeatureVector = new ArrayList<>();
-        List postTimeVector = new ArrayList();
-        
-//        for(String postTime : user.getPostTime()){
-//            
-//        }
-        
-        return timeFeatureVector;
     }
 
     /**
@@ -749,30 +765,4 @@ public class StylometricAnalysisMain {
         }
 
     }
-
-    /*public static void main(String args[]) throws SQLException, IOException {
-        String text1 = "This is a litte test.";
-        String text11 = "This is the second little text. I wonder if this will work out okay.";
-        String text12 = "This is the second little text. I wonder if this will work out okay.";
-        String text13 = "This is the second little text. I wonder if this will work out okay.";
-        String text2 = "Hi, how are you? This is a test...";
-        String text22 = "You, have you seen this video? Goooh!";
-        String text23 = "You, have you seen this video? Goooh!";
-        String text24 = "You, have you seen this video? Goooh!";
-        List firstList = new ArrayList();
-        List secondList = new ArrayList();
-        firstList.add(text1);
-        firstList.add(text11);
-        firstList.add(text12);
-        firstList.add(text13);
-        secondList.add(text2);
-        secondList.add(text22);
-        secondList.add(text23);
-        secondList.add(text24);
-
-        StylometricAnalysisMain init = new StylometricAnalysisMain();
-//        double stylo = init.returnStylo(firstList, secondList);
-        List<Float> stylo = init.executePostAnalysis(firstList);
-        System.out.println("Stylo: " + stylo);
-    }*/
 }

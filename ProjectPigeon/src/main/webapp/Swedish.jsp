@@ -15,6 +15,7 @@
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
         <script type="text/javascript" src="utilities/json2.js"></script>
         <script type="text/javascript" src="utilities/highcharts.js"></script>
+         <script src="http://code.highcharts.com/modules/exporting.js"></script>
     </head>
     <body>
         <div>

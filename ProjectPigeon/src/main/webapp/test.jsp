@@ -1,8 +1,33 @@
 <html>
-    <input type="submit" value="click" id="click" onclick=showGraph()>
+
     <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <!--<link rel="stylesheet" type="text/css" href="utilities/reset.css">-->
     <script src="http://code.highcharts.com/highcharts.js"></script>
     <script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+    <fieldset>
+        <legend>Billing Information</legend>
+        <ul>
+
+            <li>
+                <label for="firstname">First Name</label>
+                <input type="text" name="textfield" id="firstname" />
+            </li>
+
+            <li>
+                <label for="lastname">Last Name</label>
+                <input type="text" name="textfield2" id="lastname" />
+            </li>
+
+            <li>
+                <label for="address">Address</label>
+                <textarea name="textarea" id="address"></textarea>
+            </li>
+
+        </ul>
+    </fieldset>
+
+    <input type="submit" value="click" id="click" onclick=showGraph()>
     <script>
         function showGraph() {
             $("#xxx").append("<div id='" + 1 + "'></div>");
@@ -51,8 +76,8 @@
                         name: 'London',
                         data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
                     }]
-        });
-    }
+            });
+        }
 //            alert($("#xxx").html());
 
     </script>

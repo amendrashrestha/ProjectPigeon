@@ -19,32 +19,39 @@
         <link rel="stylesheet" type="text/css" href="utilities/reset.css">
         <link rel="stylesheet" type="text/css" href="utilities/body.css">
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-        <script type="text/javascript" src="utilities/json2.js"></script>
         <script type="text/javascript" src="utilities/highcharts.js"></script>
+        <script src="http://code.highcharts.com/modules/exporting.js"></script>
     </head>
     <body>
-        <div>
+        <div id='menu'>
             <nav>
                 <ul>
                     <li><a href="index.jsp">Home</a></li>
-                    <li><a href="English.jsp">English</a></li>
-                    <li><a href="Swedish.jsp">Swedish</a></li>
+                    <li><a href="English.jsp">English</a>
+                        <ul>
+                            <li><a href="WriteText.jsp">Write Text</a></li>
+                            <li><a href="SelectUser.jsp">Select User</a></li>
+                            <li><a href="CompareUser.jsp">Compare Users</a></li>
+                            <li><a href="SplitUser.jsp">Split User</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="Swedish.jsp">Svenska</a>
+                        <ul>
+                            <li><a href="#">Skriv Text</a></li>
+                            <li><a href="#">Välja User</a></li>
+                            <li><a href="#">Jämfor Users</a></li>
+                            <li><a href="#">Sträck User</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </nav>
         </div>
-        <div>
-            <table>
-                <tr>
-                    <td>
-                        <div id = "txtForm">
-                            <form action="rest/generic/returnStylometricJSON" method="post">
-                                <textarea name="posts" ROWS="15" COLS="100" onclick="this.value = '';">This is a little test.</textarea>
-                                <input type="submit" value="Submit">                   
-                            </form>
-                        </div>
-                    </td>
-                    <td>
-                        <form method="POST" action="rest/generic/returnStylometricJSONForUser">
+        <div id='selectUser'>
+            <h2>Split User</h2>
+            <form method="POST" action="rest/generic/returnStylometricJSONForUser">
+                <table>
+                    <tr>
+                        <td>
                             Select User :
                             <select id="UserID" name="user" onChange="GetSelectedUser()">
                                 <%
@@ -57,7 +64,7 @@
                                         conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:8889/twitter_stream",
                                                 "root", "root");
                                         out.write("Connected!");
-                                        String query = "select distinct User_id from twitter_data_view order by 1 limit 1000";
+                                        String query = "select distinct User_id from twitter_data_view order by 1 limit 100";
                                         stmt = conn.createStatement();
                                         result = stmt.executeQuery(query);
 
@@ -75,18 +82,19 @@
                             <script language = "javascript">
                                 function GetSelectedUser() {
                                     var dropdownIndex = document.getElementById('UserID').value;
-                                    window.location.replace("English.jsp?user=" + dropdownIndex);
+                                    window.location.replace("SelectUser.jsp?user=" + dropdownIndex);
                                 }
-                            </script>
-                            <input type="submit" value="Submit" id="submit">
-                        </form>
-                    </td>
-                </tr>
-            </table>
+                            </script> 
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="submit" value="Split" id="submit">
+                        </td>
+                    </tr>
 
-            <%-- String userID = request.getParameter("user");
-                out.println("value=" + userID);
-            --%>
+                </table>
+            </form>
         </div>
 
         <div id = "styloContainer" style= "height: 400px">

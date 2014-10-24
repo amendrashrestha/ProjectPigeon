@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class Alias {
 
-     private List<Float> featureVector;
+    private List<Float> featureVector;
     private int nrOfFeatures;
     private String user;
     private String type;
@@ -20,6 +20,7 @@ public class Alias {
     public List<String> posts;
     public List<String> postTime;
     public String singlePost;
+    private List postDate;
 
     public Alias(String userID) throws SQLException {
         this.user = userID;
@@ -63,12 +64,12 @@ public class Alias {
     public void setPosts(List<String> posts) {
         this.posts = posts;
     }
-    
-    public String getSinglePost(){
+
+    public String getSinglePost() {
         return singlePost;
     }
-    
-    public void setSinglePost(String post){
+
+    public void setSinglePost(String post) {
         this.singlePost = post;
     }
 
@@ -77,10 +78,10 @@ public class Alias {
     }
 
     public void addToFeatureVectorPostList(ArrayList<Float> freqDist, int startIndex, int index) {
-         for (Float freqDist1 : freqDist) {
-             featureVectorPostList.get(index).set(startIndex, freqDist1);
-             startIndex++;
-         }
+        for (Float freqDist1 : freqDist) {
+            featureVectorPostList.get(index).set(startIndex, freqDist1);
+            startIndex++;
+        }
     }
 
     public List<Float> getFeatureVector() {
@@ -119,12 +120,12 @@ public class Alias {
         this.user = user;
     }
 
-    public double[] getTimeVector() throws SQLException {
+    public int[] getTimeVector(List<String> postTime) throws SQLException {
 
-        double[] rr = new double[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        int[] rr = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        
-        for(String postHour : postTime){
+
+        for (String postHour : postTime) {
             String[] time = postHour.split(":");
             int hr = Integer.parseInt(time[0]);
             rr[hr]++;
@@ -132,15 +133,27 @@ public class Alias {
         return rr;
     }
 
-    public double[] getTimeVectorArray(List postTime) throws SQLException {
+    public int[] getTimeVectorArray(List postTime) throws SQLException {
 
-        double[] rr = new double[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        int[] rr = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         Iterator itr = postTime.iterator();
 
         while (itr.hasNext()) {
             Timestamp key = (Timestamp) itr.next();
             int hr = key.getHours();
+            rr[hr]++;
+        }
+        return rr;
+    }
+
+    public int[] getTimeFeatureVector(List<String> postTime) throws SQLException {
+
+        int[] rr = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+        for (String time : postTime) {
+            int hr = Integer.parseInt(time);
             rr[hr]++;
         }
         return rr;
@@ -166,5 +179,13 @@ public class Alias {
      */
     public void setType(String type) {
         this.type = type;
+    }
+
+    public void setPostDate(List postDate) {
+        this.postDate = postDate;
+    }
+
+    public List getPostDate() {
+        return postDate;
     }
 }

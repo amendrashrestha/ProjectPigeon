@@ -3,13 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-$(document).ready (function () {
+$(document).ready(function () {
 
     var options = {
         chart: {
             renderTo: 'styloContainer',
             type: 'spline'
         },
+        yAxis: {
+            min: 0
+        },
+        xAxis:{
+            min: 1,
+            tickInterval: 10,
+            tickmarkPlacement: 'on'
+        },
+        
         series: [{}],
         colors: [
             '#3D96AE',
@@ -21,7 +30,7 @@ $(document).ready (function () {
             '#92A8CD',
             '#80699B',
             '#DB843D'
-            ]
+        ]
     };
     $.getJSON("utilities/stylo.json", function (data) {
         var result = [];

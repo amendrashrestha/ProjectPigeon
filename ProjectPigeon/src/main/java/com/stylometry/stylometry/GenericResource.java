@@ -63,20 +63,13 @@ public class GenericResource {
 
         JSONObject featureObject = init.executePostAnalysis(firstList);
     }
-    
+
     @POST
     @Path("/returnStylometricJSONForUser")
-    //@Produces(MediaType.APPLICATION_JSON)
-    public void getStylometricJSONForUser(@FormParam("user") String userID) throws SQLException, IOException {
+    public void getStylometricJSONForUser(@FormParam("user") int userID) throws SQLException, IOException {
 
-        //System.out.println("User: " + userID);
-//        JSONObject featureObject = 
+        System.out.println("User: " + userID);
         init.executeAnalysis(userID);
-        
-//        return Response.status(200)
-//                .entity("Stylometry : " + userID)
-//                .build();
-        //return featureObject;
     }
 
     @POST

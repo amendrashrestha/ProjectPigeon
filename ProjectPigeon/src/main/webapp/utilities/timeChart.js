@@ -11,7 +11,17 @@ $("#loadChart").ready(function () {
             type: 'spline',
             title: 'Time'
         },
-        series: [{}],
+        yAxis: {
+            min: 0
+        },
+        xAxis: {
+            categories: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+            tickInterval: 1,
+            tickmarkPlacement: 'on'
+        },
+        series: [{
+                dashStyle: 'longdash'
+            }],
         colors: [
             '#80699B',
             '#3D96AE',
@@ -21,20 +31,19 @@ $("#loadChart").ready(function () {
             '#4572A7',
             '#AA4643',
             '#92A8CD',
-            
             '#DB843D'
-            ]
+        ]
     };
     $.getJSON("utilities/timeSeries.json", function (data) {
         var result = [];
         var j = 1;
         for (var i in data)
             result.push([i, data[i]]);
+
         options.series[0].data = result;
 
         var chart = new Highcharts.Chart(options);
         chart.setTitle({text: 'Time Analysis'});
-        chart.series[0].update({name: "User " + j}, false);
         chart.redraw();
         j++;
     });

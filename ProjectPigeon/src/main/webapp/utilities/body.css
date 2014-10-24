@@ -36,12 +36,26 @@ h2{
 nav{
     padding: 0;
 }
-nav ul ul{
-    float: right;
+
+nav ul ul {
     display: none;
 }
+
 nav ul li:hover > ul{
     display: block;
+}
+
+nav ul{
+    box-shadow: 0px 0px 9px rgba(0,0,0,0.15);
+    padding: 0 20px;
+    border-radius: 10px;  
+    list-style: none;
+    position: relative;
+    display: inline-table;
+}
+
+nav ul:after{
+    content: ""; clear: both; display: block;
 }
 
 nav ul li{
@@ -49,35 +63,29 @@ nav ul li{
 }
 
 nav ul li a{
-    display: block; padding: 5px 10px;   
-    text-decoration: none;
-}
-
-nav ul{
-    padding: 0 10px;
-    border-radius: 10px;
-    list-style: none;
-    position: relative;
-    display: inline-table;
-    box-shadow: 0px 0px 9px rgba(0,0,0,0.15);
-}
-
-nav ul:after{
-    content: ""; clear: both; display: block;
+    display:block;
+    padding: 5px 15px;
 }
 
 nav ul ul{
-    position: absolute; top: 100%;
+    background: #5f6975;
+    padding: 0;
+    border-radius: 0px;
+    position: absolute;
+    top: 100%;
 }
 
 nav ul ul li{
     float: none;
+    border-top: 1px solid #6b727c;
+    border-bottom: 1px solid #575f6a;
     position: relative;
 }
 
-nav ul ul ul{
-    position: absolute; left: 100%; top: 0;
+nav ul ul li a{
+    padding: 5px 15px;
 }
+
 
 #logo{
     float: right;
@@ -86,5 +94,26 @@ nav ul ul ul{
 }
 
 #styloContainer{
-    padding-top: 20px;
+    padding-top: 100px;
 }
+#timeContainer{
+    padding-top: 40px;
+}
+
+#selectUser{
+    float: right;
+    padding-bottom: 40px;
+}
+
+#textBox{
+    float: right;
+}
+
+#submit{
+    float: right; 
+}
+
+td{
+    height: 35px;
+}
+
