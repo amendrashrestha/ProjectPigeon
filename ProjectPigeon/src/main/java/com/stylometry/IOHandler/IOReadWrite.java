@@ -224,7 +224,7 @@ public class IOReadWrite {
             file = new File(basePath + directoryName + "/" + fileName + extension);
             reader = new BufferedReader(new FileReader(file));
             String line = null;
-            
+
             if (file.exists()) {
                 while ((line = reader.readLine()) != null) {
                     stringBuilder.append(line);
@@ -234,14 +234,15 @@ public class IOReadWrite {
             throw ex;
         } catch (IOException ex) {
             throw ex;
-        }finally{
+        } finally {
             reader.close();
         }
         String a = stringBuilder.substring(0, (stringBuilder.length() - (IOProperties.DATA_SEPERATOR).length()));
         return a;
     }
 
-    public String readTxtFileAsString(String basePath, String fileName, String extension) throws FileNotFoundException, IOException {
+    public String readTxtFileAsString(String basePath, String fileName, String extension) 
+            throws FileNotFoundException, IOException {
 
         StringBuilder stringBuilder = new StringBuilder();
         try {
@@ -303,15 +304,13 @@ public class IOReadWrite {
             Posts posts = new Posts();
             String time = temp[i].substring(0, 8);
             String date = temp[i].substring(9, 19);
+            String content = temp[i].substring(20);
             if (time.matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")) {
                 posts.setTime(time);
                 posts.setDate(date);
-                posts.setContent(temp[i].substring(20, temp[i].length()));
+                posts.setContent(content);
                 postList.add(posts);
-                //System.out.println(date);
             } else {
-                continue;
-
             }
         }
         user.setUserPost(postList);
@@ -352,8 +351,6 @@ public class IOReadWrite {
                 }
                 //System.out.println(date);
             } else {
-                continue;
-
             }
         }
         user.setUserPost(postList);
@@ -384,8 +381,6 @@ public class IOReadWrite {
                 posts.setContent(temp[i].substring(9, temp[i].length()));
                 postList.add(posts);
             } else {
-                continue;
-
             }
         }
         user.setUserPost(postList);
@@ -429,8 +424,6 @@ public class IOReadWrite {
                 postList.add(posts);
                 //System.out.println(date);
             } else {
-                continue;
-
             }
         }
         user.setUserPost(postList);
@@ -542,7 +535,7 @@ public class IOReadWrite {
         }
         return numList;
     }
-    
+
     public List<User> returnUsers() throws IOException {
         String filePath_06 = IOProperties.YEAR_DATA_FILE_PATH_06;
         String filePath_07 = IOProperties.YEAR_DATA_FILE_PATH_07;
@@ -584,8 +577,6 @@ public class IOReadWrite {
         }
         return user;
     }
-
-    
 
     /**
      * split string into character and returns
@@ -760,6 +751,73 @@ public class IOReadWrite {
         return aliasList;
     }
 
+    public List<Alias> returnSplitAliasObject(int UserID) throws FileNotFoundException, IOException {
+
+        List<Alias> aliasList = new ArrayList();
+        String basePath = IOProperties.INDIVIDUAL_USER_FILE_PATH;
+        String filename = String.valueOf(UserID);
+        String folderName = getFolderName(filename);
+        String extension = IOProperties.USER_FILE_EXTENSION;
+                
+        String userPostAsString = readTxtFileAsString(basePath, folderName, filename, extension);
+
+        String temp[] = null;
+        Alias aliasA = new Alias();
+        Alias aliasB = new Alias();
+        List<String> postListA = new ArrayList<>();
+        List<String> timeListA = new ArrayList<>();
+        List<String> dateListA = new ArrayList<>();
+        
+        List<String> postListB = new ArrayList<>();
+        List<String> timeListB = new ArrayList<>();
+        List<String> dateListB = new ArrayList<>();
+
+        aliasA.setType("A");
+        aliasB.setType("B");
+
+        if (userPostAsString.contains(IOProperties.DATA_SEPERATOR)) {
+            temp = userPostAsString.split(IOProperties.DATA_SEPERATOR);
+        } else {
+            temp = new String[1];
+            temp[0] = userPostAsString;
+        }
+
+        for (int i = 0; i < temp.length; i++) {
+            if (temp[i].matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")
+                    || temp[i].length() == 8) {
+                temp[i] = temp[i] + "  ";
+            }
+            String time = temp[i].substring(0, 8);
+            String content = "";
+            String date = "";
+            if (time.matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")) {
+                date = temp[i].substring(9, 19);
+                content = temp[i].substring(20);
+                if (i % 2 == 0) {
+                    timeListA.add(time);
+                    dateListA.add(date);
+                    postListA.add(content);
+                } else {
+                    timeListB.add(time);
+                    dateListB.add(date);
+                    postListB.add(content);
+                }
+            }
+        }
+
+        aliasA.setPostTime(timeListA);
+        aliasA.setPostDate(dateListA);
+        aliasA.setPosts(postListA);
+        aliasList.add(aliasA);
+
+        aliasB.setPostTime(timeListB);
+        aliasB.setPostDate(dateListB);
+        aliasB.setPosts(postListB);
+        aliasList.add(aliasB);
+
+        return aliasList;
+    }
+
     public List<User> returnDividedUserForTimeFeat(int divisionFlag, List<User> usersList, User user) throws FileNotFoundException, IOException {
         int UserID = user.getId();
         User userA = new User();
@@ -856,9 +914,9 @@ public class IOReadWrite {
         List<Alias> aliasList = new ArrayList<>();
         IOReadWrite ioReadWrite = new IOReadWrite();
 
-        for (int i = 0; i < userIDList.size(); i++) {
-            alias = ioReadWrite.convertTxtFileToAliasObj(IOProperties.INDIVIDUAL_USER_FILE_PATH,
-                    ioReadWrite.getFolderName(userIDList.get(i)), userIDList.get(i), IOProperties.USER_FILE_EXTENSION);
+        for (String userIDList1 : userIDList) {
+            alias = ioReadWrite.convertTxtFileToAliasObj(IOProperties.INDIVIDUAL_USER_FILE_PATH, 
+                    ioReadWrite.getFolderName(userIDList1), userIDList1, IOProperties.USER_FILE_EXTENSION);
             aliasList.add(alias);
         }
         return aliasList;

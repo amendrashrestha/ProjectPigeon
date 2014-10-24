@@ -3,13 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-$("#loadChart").ready(function () {
+$(document).ready(function () {
 
     var options = {
         chart: {
             renderTo: 'timeContainer',
-            type: 'spline',
-            title: 'Time'
+            type: 'spline'
         },
         yAxis: {
             min: 0
@@ -19,33 +18,35 @@ $("#loadChart").ready(function () {
             tickInterval: 1,
             tickmarkPlacement: 'on'
         },
-        series: [{
-                dashStyle: 'longdash'
-            }],
-        colors: [
-            '#80699B',
-            '#3D96AE',
-            '#89A54E',
-            '#A47D7C',
-            '#B5CA92',
-            '#4572A7',
-            '#AA4643',
-            '#92A8CD',
-            '#DB843D'
-        ]
+        series: []
     };
-    $.getJSON("utilities/timeSeries.json", function (data) {
-        var result = [];
-        var j = 1;
-        for (var i in data)
-            result.push([i, data[i]]);
 
-        options.series[0].data = result;
+    var drawChart = function (data, name, color) {
+
+        var newSeriesData = {
+            name: name,
+            data: data,
+            color: color,
+            dashStyle: 'longdash'
+        };
+
+        options.series.push(newSeriesData);
 
         var chart = new Highcharts.Chart(options);
         chart.setTitle({text: 'Time Analysis'});
-        chart.redraw();
-        j++;
+        chart.yAxis[0].setTitle({text: "Percentage of Post"});
+        chart.xAxis[0].setTitle({text: "Hour of Day"});
+
+    };
+
+
+    $.getJSON("utilities/timeSeries1.json", function (data) {
+        var result = [];
+        var user = "User1";
+        var color = 'blue';
+
+        for (var i in data)
+            result.push([i, data[i]]);
+        drawChart(result, user, color);
     });
 });
-

@@ -26,7 +26,8 @@ $(document).ready(function () {
         var newSeriesData = {
             name: name,
             data: data,
-            color: color
+            color: color,
+            dashStyle: 'longdash'
         };
 
         options.series.push(newSeriesData);
@@ -42,7 +43,17 @@ $(document).ready(function () {
     $.getJSON("utilities/stylo1.json", function (data) {
         var result = [];
         var user = "User1";
-        var color = 'green';
+        var color = '#92A8CD';
+
+        for (var i in data)
+            result.push([i, data[i]]);
+        drawChart(result, user, color);
+    });
+
+    $.getJSON("utilities/stylo2.json", function (data) {
+        var result = [];
+        var user = "User2";
+        var color = "#DB843D";
 
         for (var i in data)
             result.push([i, data[i]]);

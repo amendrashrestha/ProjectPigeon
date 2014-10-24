@@ -4,6 +4,9 @@
     Author     : amendrashrestha
 --%>
 
+<%@page import="com.stylometry.model.User"%>
+<%@page import="java.util.List"%>
+<%@page import="com.stylometry.IOHandler.IOReadWrite"%>
 <%@page import="java.sql.SQLException"%>
 <%@page import="java.sql.DriverManager"%>
 <%@page import="java.sql.ResultSetMetaData"%>
@@ -49,80 +52,46 @@
         <div id='selectUser'>
             <h2>Compare User</h2>
 
-            <form method="POST" action="rest/generic/returnStylometricJSONForUser">
-                <table border="1">
+            <form method="POST" action="rest/generic/returnStylometricJSONForTwoUser">
+                <table>
                     <tr>
                         <td>
-                            
-                       Select User1 :
-                    <select id="UserID1" name="user" onChange="GetSelectedUser()">
-                        <%
-                            Connection conn = null;
-                            ResultSet result = null;
-                            Statement stmt = null;
+                            Select User1 :
+                            <select id="UserID1" name="user1" onChange="GetSelectedUser()">
+                                <%
+                                    IOReadWrite io = new IOReadWrite();
+                                    List<User> userList = io.getAllUsersAsObject();
+                                    userList = io.returnLimitedSortedUser(userList, userList.size());
 
-                            try {
-                                Class c = Class.forName("com.mysql.jdbc.Driver");
-                                conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:8889/twitter_stream",
-                                        "root", "root");
-                                out.write("Connected!");
-                                String query = "select distinct User_id from twitter_data_view order by 1 limit 15";
-                                stmt = conn.createStatement();
-                                result = stmt.executeQuery(query);
-
-                                while (result.next()) {
-                                    String userID = result.getString("User_id");
-                        %>
-                        <option value="<%=userID%>"><%=userID%></option>
-                        <%
-                                }
-                            } catch (Exception e) {
-                                System.out.println("Error!!!!!!" + e);
-                            }
-                        %>
-                    </select>  
-                    <script language = "javascript">
-                        function GetSelectedUser() {
-                            var dropdownIndex = document.getElementById('UserID1').value;
-                            window.location.replace("SelectUser.jsp?user=" + dropdownIndex);
-                        }
-                    </script>
+                                    for (User user : userList) {
+                                        int userID = user.getId();
+                                %>
+                                <option value="<%=userID%>"><%=userID%></option>
+                                <% }
+                                %>
+                            </select>  
                         </td>
                     </tr>
                     <tr>
                         <td>
-                        Select User2 :
-                    <select id="UserID2" name="user" onChange="GetSelectedUser()">
-                        <%
-    //                        Connection conn = null;
-    //                        ResultSet result = null;
-    //                        Statement stmt = null;
-                            try {
-                                Class c = Class.forName("com.mysql.jdbc.Driver");
-                                conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:8889/twitter_stream",
-                                        "root", "root");
-                                out.write("Connected!");
-                                String query = "select distinct User_id from twitter_data_view order by 1 limit 10";
-                                stmt = conn.createStatement();
-                                result = stmt.executeQuery(query);
+                            Select User2 :
+                            <select id="UserID2" name="user2" onChange="GetSelectedUser()">
+                                <%
+                                    userList = io.returnLimitedSortedUser(userList, userList.size());
 
-                                while (result.next()) {
-                                    String userID = result.getString("User_id");
-                        %>
-                        <option value="<%=userID%>"><%=userID%></option>
-                        <%
+                                    for (User user : userList) {
+                                        int userID = user.getId();
+                                %>
+                                <option value="<%=userID%>"><%=userID%></option>
+                                <% }
+                                %>
+                            </select>  
+<!--                            <script language = "javascript">
+                                function GetSelectedUser() {
+                                    var dropdownIndex = document.getElementById('UserID2').value;
+                                    window.location.replace("SelectUser.jsp?user=" + dropdownIndex);
                                 }
-                            } catch (Exception e) {
-                                System.out.println("Error!!!!!!" + e);
-                            }
-                        %>
-                    </select>  
-                    <script language = "javascript">
-                        function GetSelectedUser() {
-                            var dropdownIndex = document.getElementById('UserID2').value;
-                            window.location.replace("SelectUser.jsp?user=" + dropdownIndex);
-                        }
-                    </script>
+                            </script>-->
                         </td>
                     </tr>
                 </table>
@@ -131,10 +100,10 @@
         </div>
 
         <div id = "styloContainer" style= "height: 400px">
-            <script type="text/javascript" src="utilities/styloChart.js"></script>
+            <script type="text/javascript" src="utilities/styloChartForMultipleUser.js"></script>
         </div>
         <div id = "timeContainer" style= "height: 400px">
-            <script type="text/javascript" src="utilities/timeChart.js"></script>
+            <script type="text/javascript" src="utilities/timeChartForMultipleUser.js"></script>
         </div>
     </body>
 </html>

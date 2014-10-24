@@ -82,30 +82,60 @@ public class StylometricAnalysisMain {
         System.out.println(filepath);
     }
 
-    public void executeAnalysis(int ID) throws IOException, SQLException {
-        Alias alias = new Alias();
-        String styloJSONfilename = "stylo.json";
-        String timeJSONfilename = "timeSeries.json";
+    public void executeAnalysis(List<Integer> userList) throws IOException, SQLException {
 
-        User user = io.getUsersAsObject(ID);
+        int i = 1;
+        for (Integer userID : userList) {
+            Alias alias = new Alias();
 
-        List userPosts = new ArrayList();
-        List userPostTime = new ArrayList();
+            String styloJSONfilename = "stylo" + i + ".json";
+            String timeJSONfilename = "timeSeries" + i + ".json";
 
-        for (Posts posts : user.getUserPost()) {
-            String post = posts.getContent();
-            String postTime = posts.getTime();
-            userPosts.add(post);
-            userPostTime.add(postTime);
+            User user = io.getUsersAsObject(userID);
+
+            List userPosts = new ArrayList();
+            List userPostTime = new ArrayList();
+
+            for (Posts posts : user.getUserPost()) {
+                String post = posts.getContent();
+                String postTime = posts.getTime();
+                userPosts.add(post);
+                userPostTime.add(postTime);
+            }
+            alias.setPosts(userPosts);
+
+            List<Float> freatuteVector = createFeatureVectors(alias);
+            int[] tempTimeFeatureVector = alias.getTimeVector(userPostTime);
+            double[] timeFeatureVector = normalizedFeatureVector(tempTimeFeatureVector);
+
+            returnJSONfile(freatuteVector, styloJSONfilename);
+            returnJSONfile(timeFeatureVector, timeJSONfilename);
+
+            i++;
         }
-        alias.setPosts(userPosts);
+    }
 
-        List<Float> freatuteVector = createFeatureVectors(alias);
-        int[] tempTimeFeatureVector = alias.getTimeVector(userPostTime);
-        double[] timeFeatureVector = normalizedFeatureVector(tempTimeFeatureVector);
+    public void splitUserAnalysis(int UserID) throws IOException, SQLException {
 
-        returnJSONfile(freatuteVector, styloJSONfilename);
-        returnJSONfile(timeFeatureVector, timeJSONfilename);
+        int i = 1;
+        List<Alias> userListObj = io.returnSplitAliasObject(UserID);
+
+        for (Alias alias : userListObj) {
+
+            String styloJSONfilename = "stylo" + i + ".json";
+            String timeJSONfilename = "timeSeries" + i + ".json";
+
+            List userPostTime = alias.getPostTime();
+
+            List<Float> freatuteVector = createFeatureVectors(alias);
+            int[] tempTimeFeatureVector = alias.getTimeVector(userPostTime);
+            double[] timeFeatureVector = normalizedFeatureVector(tempTimeFeatureVector);
+
+            returnJSONfile(freatuteVector, styloJSONfilename);
+            returnJSONfile(timeFeatureVector, timeJSONfilename);
+
+            i++;
+        }
     }
 
     double[] normalizedFeatureVector(int[] featureVector) {
@@ -184,7 +214,7 @@ public class StylometricAnalysisMain {
     }
 
     public JSONObject executePostAnalysis(List posts) throws IOException {
-        String filename = "stylo.json";
+        String filename = "stylo1.json";
         Alias user = new Alias();
         user.setPosts(posts);
         List<Float> freatuteVector = createFeatureVectors(user);

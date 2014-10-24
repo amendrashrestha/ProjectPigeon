@@ -66,10 +66,30 @@ public class GenericResource {
 
     @POST
     @Path("/returnStylometricJSONForUser")
-    public void getStylometricJSONForUser(@FormParam("user") int userID) throws SQLException, IOException {
+    public void getStylometricJSONForUser(@FormParam("user") int userID)
+            throws SQLException, IOException {
+        List<Integer> userList = new ArrayList<Integer>();
+        userList.add(userID);
+        init.executeAnalysis(userList);
+    }
+    
+        @POST
+    @Path("/returnSplitUser")
+    public void getSplitUser(@FormParam("user") int userID)
+            throws SQLException, IOException {
+        
+        init.splitUserAnalysis(userID);
+    }
 
-        System.out.println("User: " + userID);
-        init.executeAnalysis(userID);
+    @POST
+    @Path("/returnStylometricJSONForTwoUser")
+    public void getStylometricJSONForTwoUser(@FormParam("user1") int userID1,
+            @FormParam("user2") int userID2)
+            throws SQLException, IOException {
+        List<Integer> userList = new ArrayList<Integer>();
+        userList.add(userID1);
+        userList.add(userID2);
+        init.executeAnalysis(userList);
     }
 
     @POST

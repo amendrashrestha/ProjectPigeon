@@ -27,9 +27,6 @@
                             renderTo: 'Container1',
                             type: 'spline'
                         },
-                        rangeSelector: {
-                            selected: 1
-                        },
                         yAxis: {
                             min: 0
                         },

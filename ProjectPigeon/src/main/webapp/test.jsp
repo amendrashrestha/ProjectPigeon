@@ -5,28 +5,6 @@
     <script src="http://code.highcharts.com/highcharts.js"></script>
     <script src="http://code.highcharts.com/modules/exporting.js"></script>
 
-    <fieldset>
-        <legend>Billing Information</legend>
-        <ul>
-
-            <li>
-                <label for="firstname">First Name</label>
-                <input type="text" name="textfield" id="firstname" />
-            </li>
-
-            <li>
-                <label for="lastname">Last Name</label>
-                <input type="text" name="textfield2" id="lastname" />
-            </li>
-
-            <li>
-                <label for="address">Address</label>
-                <textarea name="textarea" id="address"></textarea>
-            </li>
-
-        </ul>
-    </fieldset>
-
     <input type="submit" value="click" id="click" onclick=showGraph()>
     <script>
         function showGraph() {
@@ -78,7 +56,7 @@
                     }]
             });
         }
-//            alert($("#xxx").html());
+            alert($("#xxx").html());
 
     </script>
 

@@ -51,7 +51,7 @@
                     <tr>
                         <td>
                             Select User :
-                            <select id="user" name="user">
+                            <select id="userID" name="user">
                                 <%
                                     IOReadWrite io = new IOReadWrite();
                                     List<User> userList = io.getAllUsersAsObject();
@@ -75,10 +75,10 @@
             </form>
         </div>
 
-        <div id = "styloContainer" style= "height: 400px">
+        <div id = "styloContainer">
             <script type="text/javascript" src="utilities/styloChart.js"></script>
         </div>
-        <div id = "timeContainer" style= "height: 400px">
+        <div id = "timeContainer">
             <script type="text/javascript" src="utilities/timeChart.js"></script>
         </div>
     </body>

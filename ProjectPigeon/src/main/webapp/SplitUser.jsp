@@ -4,12 +4,9 @@
     Author     : amendrashrestha
 --%>
 
-<%@page import="java.sql.SQLException"%>
-<%@page import="java.sql.DriverManager"%>
-<%@page import="java.sql.ResultSetMetaData"%>
-<%@page import="java.sql.Statement"%>
-<%@page import="java.sql.ResultSet"%>
-<%@page import="java.sql.Connection"%>
+<%@page import="com.stylometry.model.User"%>
+<%@page import="java.util.List"%>
+<%@page import="com.stylometry.IOHandler.IOReadWrite"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -48,43 +45,30 @@
         </div>
         <div id='selectUser'>
             <h2>Split User</h2>
-            <form method="POST" action="rest/generic/returnStylometricJSONForUser">
+            <form method="POST" action="rest/generic/returnSplitUser">
                 <table>
                     <tr>
                         <td>
                             Select User :
-                            <select id="UserID" name="user" onChange="GetSelectedUser()">
+                            <select id="userID" name="user">
                                 <%
-                                    Connection conn = null;
-                                    ResultSet result = null;
-                                    Statement stmt = null;
+                                    IOReadWrite io = new IOReadWrite();
+                                    List<User> userList = io.getAllUsersAsObject();
+                                    userList = io.returnLimitedSortedUser(userList, userList.size());
 
-                                    try {
-                                        Class c = Class.forName("com.mysql.jdbc.Driver");
-                                        conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:8889/twitter_stream",
-                                                "root", "root");
-                                        out.write("Connected!");
-                                        String query = "select distinct User_id from twitter_data_view order by 1 limit 100";
-                                        stmt = conn.createStatement();
-                                        result = stmt.executeQuery(query);
-
-                                        while (result.next()) {
-                                            String userID = result.getString("User_id");
+                                    for (User user : userList) {
+                                        int userID = user.getId();
                                 %>
                                 <option value="<%=userID%>"><%=userID%></option>
-                                <%
-                                        }
-                                    } catch (Exception e) {
-                                        System.out.println("Error!!!!!!" + e);
-                                    }
+                                <% }
                                 %>
-                            </select>  
-                            <script language = "javascript">
+                            </select> 
+<!--                            <script language = "javascript">
                                 function GetSelectedUser() {
                                     var dropdownIndex = document.getElementById('UserID').value;
                                     window.location.replace("SelectUser.jsp?user=" + dropdownIndex);
                                 }
-                            </script> 
+                            </script> -->
                         </td>
                     </tr>
                     <tr>
@@ -97,11 +81,11 @@
             </form>
         </div>
 
-        <div id = "styloContainer" style= "height: 400px">
-            <script type="text/javascript" src="utilities/styloChart.js"></script>
+        <div id = "styloContainer">
+            <script type="text/javascript" src="utilities/styloChartForMultipleUser.js"></script>
         </div>
-        <div id = "timeContainer" style= "height: 400px">
-            <script type="text/javascript" src="utilities/timeChart.js"></script>
+        <div id = "timeContainer">
+            <script type="text/javascript" src="utilities/timeChartForMultipleUser.js"></script>
         </div>
     </body>
 </html>
