@@ -73,7 +73,7 @@ public class GenericResource {
         init.executeAnalysis(userList);
     }
     
-        @POST
+    @POST
     @Path("/returnSplitUser")
     public void getSplitUser(@FormParam("user") int userID)
             throws SQLException, IOException {

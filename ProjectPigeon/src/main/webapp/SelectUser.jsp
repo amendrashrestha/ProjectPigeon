@@ -56,14 +56,14 @@
                                     IOReadWrite io = new IOReadWrite();
                                     List<User> userList = io.getAllUsersAsObject();
                                     userList = io.returnLimitedSortedUser(userList, userList.size());
-                                    
+
                                     for (User user : userList) {
                                         int userID = user.getId();
                                 %>
                                 <option value="<%=userID%>"><%=userID%></option>
                                 <% }
                                 %>
-                            </select>  
+                            </select>                             
                         </td>
                     </tr>
                     <tr>

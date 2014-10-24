@@ -35,11 +35,10 @@ $(document).ready(function () {
         chart.setTitle({text: 'Stylometry Analysis'});
         chart.yAxis[0].setTitle({text: "Percentage of Post"});
         chart.xAxis[0].setTitle({text: "Types of features"});
-
     };
-
-
+    
     $.getJSON("utilities/stylo1.json", function (data) {
+
         var result = [];
         var user = "User1";
         var color = 'green';
