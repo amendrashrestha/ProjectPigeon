@@ -8,6 +8,7 @@
 <%@page import="java.util.List"%>
 <%@page import="com.stylometry.IOHandler.IOReadWrite"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -44,8 +45,8 @@
             </nav>
         </div>
         <div id='selectUser'>
-            <h2>Split User</h2>
-            <form method="POST" action="rest/generic/returnSplitUser">
+            <h2>Select User</h2>
+            <form method="POST" action="rest/generic/returnStylometricJSONForUser">
                 <table>
                     <tr>
                         <td>
@@ -62,33 +63,23 @@
                                 <option value="<%=userID%>"><%=userID%></option>
                                 <% }
                                 %>
-                            </select> 
-                            <!--                            <script language = "javascript">
-                                                            function GetSelectedUser() {
-                                                                var dropdownIndex = document.getElementById('UserID').value;
-                                                                window.location.replace("SelectUser.jsp?user=" + dropdownIndex);
-                                                            }
-                                                        </script> -->
+                            </select>                             
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <input type="submit" value="Split" id="submit">
+                            <input type="submit" value="Submit" id="submit">
                         </td>
                     </tr>
-
                 </table>
             </form>
         </div>
 
         <div id = "styloContainer">
-            <script type="text/javascript" src="utilities/styloChartForMultipleUser.js"></script>
+            <script type="text/javascript" src="utilities/styloChart.js"></script>
         </div>
         <div id = "timeContainer">
-            <script type="text/javascript" src="utilities/timeChartForMultipleUser.js"></script>
+            <script type="text/javascript" src="utilities/timeChart.js"></script>
         </div>
-<!--        <div id = "timeFVContainer">
-            <script type="text/javascript" src="utilities/timeFVChartForMultipleUser.js"></script>
-        </div>-->
     </body>
 </html>

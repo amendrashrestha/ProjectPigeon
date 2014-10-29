@@ -27,6 +27,9 @@ import com.stylometry.model.Alias;
 import com.stylometry.model.Posts;
 import com.stylometry.model.ReturnSortedUserList;
 import com.stylometry.model.User;
+import java.sql.SQLException;
+import java.text.ParseException;
+import org.apache.commons.lang.ArrayUtils;
 
 /**
  *
@@ -241,7 +244,7 @@ public class IOReadWrite {
         return a;
     }
 
-    public String readTxtFileAsString(String basePath, String fileName, String extension) 
+    public String readTxtFileAsString(String basePath, String fileName, String extension)
             throws FileNotFoundException, IOException {
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -758,7 +761,7 @@ public class IOReadWrite {
         String filename = String.valueOf(UserID);
         String folderName = getFolderName(filename);
         String extension = IOProperties.USER_FILE_EXTENSION;
-                
+
         String userPostAsString = readTxtFileAsString(basePath, folderName, filename, extension);
 
         String temp[] = null;
@@ -767,7 +770,7 @@ public class IOReadWrite {
         List<String> postListA = new ArrayList<>();
         List<String> timeListA = new ArrayList<>();
         List<String> dateListA = new ArrayList<>();
-        
+
         List<String> postListB = new ArrayList<>();
         List<String> timeListB = new ArrayList<>();
         List<String> dateListB = new ArrayList<>();
@@ -915,7 +918,7 @@ public class IOReadWrite {
         IOReadWrite ioReadWrite = new IOReadWrite();
 
         for (String userIDList1 : userIDList) {
-            alias = ioReadWrite.convertTxtFileToAliasObj(IOProperties.INDIVIDUAL_USER_FILE_PATH, 
+            alias = ioReadWrite.convertTxtFileToAliasObj(IOProperties.INDIVIDUAL_USER_FILE_PATH,
                     ioReadWrite.getFolderName(userIDList1), userIDList1, IOProperties.USER_FILE_EXTENSION);
             aliasList.add(alias);
         }
@@ -946,5 +949,92 @@ public class IOReadWrite {
 
     public List<Alias> convertUserToObj(List post1, List post2) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public int[] getUserTimeProfile(User user) throws ParseException {
+
+        user.setCategorizedTimeToUser(user); //Number of messages in 6 hour interval of a day
+        user.setCategorizedDayToUser(user); //Number of messages in 7 days of week
+        user.setCategorizedHourOfDayToUser(user); //Number of messages in 24 hours of day
+        user.setCategorizedTypeOfWeekToUser(user);
+
+        int[] hourOfDay = user.getClassifiedHourOfDayVector();
+        int[] timeOfInterval = user.getClassifiedTimeVector();
+        int[] dayOfWeek = user.getClassifiedDayVector();
+        int[] typeOfWeek = user.getClassifiedTypeOfWeekVector();
+
+        hourOfDay = returnNormalizedVector(hourOfDay);
+        timeOfInterval = returnNormalizedVector(timeOfInterval);
+        dayOfWeek = returnNormalizedVector(dayOfWeek);
+        typeOfWeek = returnNormalizedVector(typeOfWeek);
+
+        int[] combined = ArrayUtils.addAll(hourOfDay, timeOfInterval);
+        int[] combined1 = ArrayUtils.addAll(combined, dayOfWeek);
+        int[] combined3 = ArrayUtils.addAll(combined1, typeOfWeek);
+
+        return combined3;
+    }
+
+    public int[] getTimeVector(List<String> postTime) throws SQLException {
+
+        int[] rr = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+        for (String postHour : postTime) {
+            String[] time = postHour.split(":");
+            int hr = Integer.parseInt(time[0]);
+            rr[hr]++;
+        }
+        return rr;
+    }
+
+    public int[] getTimeFeatureVector(List<String> postTime) throws SQLException {
+
+        int[] rr = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+        for (String time : postTime) {
+            int hr = Integer.parseInt(time);
+            rr[hr]++;
+        }
+        return rr;
+    }
+
+    /*public double[] normalizedFeatureVector(int[] featureVector) {
+        double[] normFeatureVector = new double[24];
+        double total = 0;
+
+        for (int time : featureVector) {
+            total += time;
+        }
+
+        for (int i = 0; i < featureVector.length; i++) {
+            int j = featureVector[i];
+
+            normFeatureVector[i] = j / total;
+        }
+        return normFeatureVector;
+    }*/
+    /**
+     * return the normalized/percentage of posts
+     *
+     * @param timeVector
+     * @param sum
+     * @return
+     */
+    public int[] returnNormalizedVector(int[] timeVector) {
+        int total = 0;
+
+        for (int time : timeVector) {
+            total += time;
+        }
+
+        for (int index = 0; index < timeVector.length; index++) {
+            double time = timeVector[index];
+            double perc = (double) (time / total);
+            int temp = (int) ((perc * 100) + 0.5);
+            timeVector[index] = temp;
+        }
+        return timeVector;
     }
 }

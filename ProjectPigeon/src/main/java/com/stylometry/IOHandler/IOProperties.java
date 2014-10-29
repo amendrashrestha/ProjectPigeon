@@ -55,6 +55,6 @@ public class IOProperties {
     public static final String SECOND_ACTIVITY_FILE_NAME = "secondactivitycluster";
     public static final String SECOND_ACTIVITY_FILE_EXTENSION = ".txt";
     
-//    public static final String FUNCTION_WORDS_PATH = "/functionWord/function_words.txt";
+    public static final String SWE_FUNCTION_WORDS_PATH = System.getProperty("user.home") + "/functionWords_Swedish.txt";
     public static final String FUNCTION_WORDS_PATH = System.getProperty("user.home") + "/functionWord/function_words.txt";
 }

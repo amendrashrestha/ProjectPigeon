@@ -20,6 +20,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.BreakIterator;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -70,7 +71,6 @@ public class StylometricAnalysisMain {
 
     public StylometricAnalysisMain() {
         super();
-        loadFunctionWords(IOProperties.FUNCTION_WORDS_PATH);
         //loadDataFile(IOProperties.INDIVIDUAL_USER_FILE_PATH);
         aliases = new ArrayList<>();
         io = new IOReadWrite();
@@ -82,14 +82,16 @@ public class StylometricAnalysisMain {
         System.out.println(filepath);
     }
 
-    public void executeAnalysis(List<Integer> userList) throws IOException, SQLException {
+    public void executeAnalysis(List<Integer> userList) throws IOException, SQLException, ParseException {
 
         int i = 1;
+        loadFunctionWords(IOProperties.FUNCTION_WORDS_PATH);
         for (Integer userID : userList) {
             Alias alias = new Alias();
 
             String styloJSONfilename = "stylo" + i + ".json";
             String timeJSONfilename = "timeSeries" + i + ".json";
+            String timeFVJSONfilename = "timeFVSeries" + i + ".json";
 
             User user = io.getUsersAsObject(userID);
 
@@ -105,11 +107,15 @@ public class StylometricAnalysisMain {
             alias.setPosts(userPosts);
 
             List<Float> freatuteVector = createFeatureVectors(alias);
-            int[] tempTimeFeatureVector = alias.getTimeVector(userPostTime);
-            double[] timeFeatureVector = normalizedFeatureVector(tempTimeFeatureVector);
+            int[] temphourOfDayFeatureVector = io.getTimeVector(userPostTime);
+            int[] hourOfDayFeatureVector = io.returnNormalizedVector(temphourOfDayFeatureVector);
+            
+            int[] tempTimeFeatureVector = io.getUserTimeProfile(user);
+            int[] timeFeatureVector = io.returnNormalizedVector(tempTimeFeatureVector);
 
-            returnJSONfile(freatuteVector, styloJSONfilename);
-            returnJSONfile(timeFeatureVector, timeJSONfilename);
+            returnJSONfile(freatuteVector, styloJSONfilename, userID);
+            returnJSONfile(hourOfDayFeatureVector, timeJSONfilename, userID);
+            returnJSONfile(timeFeatureVector, timeFVJSONfilename, userID);
 
             i++;
         }
@@ -118,6 +124,7 @@ public class StylometricAnalysisMain {
     public void splitUserAnalysis(int UserID) throws IOException, SQLException {
 
         int i = 1;
+        loadFunctionWords(IOProperties.FUNCTION_WORDS_PATH);
         List<Alias> userListObj = io.returnSplitAliasObject(UserID);
 
         for (Alias alias : userListObj) {
@@ -128,31 +135,17 @@ public class StylometricAnalysisMain {
             List userPostTime = alias.getPostTime();
 
             List<Float> freatuteVector = createFeatureVectors(alias);
-            int[] tempTimeFeatureVector = alias.getTimeVector(userPostTime);
-            double[] timeFeatureVector = normalizedFeatureVector(tempTimeFeatureVector);
+            int[] temphourOfDayFeatureVector = io.getTimeVector(userPostTime);
+            int[] hourOfDayFeatureVector = io.returnNormalizedVector(temphourOfDayFeatureVector);
+            
+//            int[] tempTimeFeatureVector = io.getUserTimeProfile(userPostTime);
+//            int[] timeFeatureVector = io.returnNormalizedVector(tempTimeFeatureVector);
 
-            returnJSONfile(freatuteVector, styloJSONfilename);
-            returnJSONfile(timeFeatureVector, timeJSONfilename);
+            returnJSONfile(freatuteVector, styloJSONfilename, UserID);
+            returnJSONfile(hourOfDayFeatureVector, timeJSONfilename, UserID);
 
             i++;
         }
-    }
-
-    double[] normalizedFeatureVector(int[] featureVector) {
-        double[] normFeatureVector = new double[24];
-        double total = 0;
-
-        for (int time : featureVector) {
-            total += time;
-        }
-
-        for (int i = 0; i < featureVector.length; i++) {
-            int j = featureVector[i];
-
-            normFeatureVector[i] = j / total;
-        }
-
-        return normFeatureVector;
     }
 
     private ArrayList getUserPostSQL(String Id) throws SQLException {
@@ -216,14 +209,28 @@ public class StylometricAnalysisMain {
     public JSONObject executePostAnalysis(List posts) throws IOException {
         String filename = "stylo1.json";
         Alias user = new Alias();
+        int userID = 1;
         user.setPosts(posts);
+        loadFunctionWords(IOProperties.FUNCTION_WORDS_PATH);
         List<Float> freatuteVector = createFeatureVectors(user);
-        JSONObject featureObject = returnJSONfile(freatuteVector, filename);
+        JSONObject featureObject = returnJSONfile(freatuteVector, filename, userID);
         return featureObject;
     }
 
-    private JSONObject returnJSONfile(List<Float> freatuteVector, String filename) {
+    public JSONObject executePostAnalysisSwed(List posts) throws IOException {
+        String filename = "styloSwe.json";
+        Alias user = new Alias();
+        int userID = 1;
+        user.setPosts(posts);
+        loadFunctionWords(IOProperties.SWE_FUNCTION_WORDS_PATH);
+        List<Float> freatuteVector = createFeatureVectorsSwe(user);
+        JSONObject featureObject = returnJSONfile(freatuteVector, filename, userID);
+        return featureObject;
+    }
+
+    private JSONObject returnJSONfile(List<Float> freatuteVector, String filename, int userID) {
         JSONObject obj = new JSONObject();
+        obj.put(0, userID);
         for (int i = 0; i < freatuteVector.size(); i++) {
             obj.put(i + 1, freatuteVector.get(i));
         }
@@ -231,8 +238,9 @@ public class StylometricAnalysisMain {
         return obj;
     }
 
-    private JSONObject returnJSONfile(double[] freatuteVector, String filename) {
+    private JSONObject returnJSONfile(int[] freatuteVector, String filename, int userID) {
         JSONObject obj = new JSONObject();
+        obj.put(0, userID);
         for (int i = 0; i < freatuteVector.length; i++) {
             obj.put(i + 1, freatuteVector[i]);
         }
@@ -510,14 +518,15 @@ public class StylometricAnalysisMain {
     }
 
     /**
-     * Loops through all aliases and construct their feature vectors
+     * Loops through all aliases and construct their feature vectors for English
+     * text
      *
      * @param user
      * @return
      */
     public List<Float> createFeatureVectors(Alias user) {
         List<Float> featureVector = new ArrayList<>();
-        featVectorForAllAliases = new ArrayList<>();
+        //featVectorForAllAliases = new ArrayList<>();
         //  for (Alias alias : aliases) {
         int cnt = 0;
         user.setFeatureVectorPosList(user.initializeFeatureVectorPostList());
@@ -559,7 +568,64 @@ public class StylometricAnalysisMain {
                 featureVector.set(i, value);
             }
             user.setFeatureVector(featureVector);
-            featVectorForAllAliases.add(featureVector);
+            //featVectorForAllAliases.add(featureVector);
+        }
+        return featureVector;
+        //normalizeFeatureVector();
+    }
+
+    /**
+     * Loops through all aliases and construct their feature vectors for Swedish
+     * text
+     *
+     * @param user
+     * @return
+     */
+    public List<Float> createFeatureVectorsSwe(Alias user) {
+        List<Float> featureVector = new ArrayList<>();
+        // featVectorForAllAliases = new ArrayList<>();
+        //  for (Alias alias : aliases) {
+        int cnt = 0;
+        user.setFeatureVectorPosList(user.initializeFeatureVectorPostListForSwe());
+        // Calculate each part of the "feature vector" for each individual post
+        for (String post : user.getPosts()) {
+            List<String> wordsInPost = extractWords(post);
+            int placeInFeatureVector = 0;
+
+            placeInFeatureVector = countFunctionWords(wordsInPost).size();
+            System.out.println("FunctionWOrdSize: " + placeInFeatureVector);
+            user.addToFeatureVectorPostList(countFunctionWords(wordsInPost), 0, cnt);
+
+            user.addToFeatureVectorPostList(countWordLengths(wordsInPost), placeInFeatureVector, cnt);
+            placeInFeatureVector = placeInFeatureVector + countWordLengths(wordsInPost).size();
+            System.out.println("WordLengthSize: " + placeInFeatureVector);
+
+            user.addToFeatureVectorPostList(countCharactersAZ(post), placeInFeatureVector, cnt);
+            placeInFeatureVector = placeInFeatureVector + countCharactersAZ(post).size();
+            System.out.println("DigitNCharacters: " + placeInFeatureVector);
+
+            user.addToFeatureVectorPostList(countSpecialCharacters(post), placeInFeatureVector, cnt);
+            placeInFeatureVector = placeInFeatureVector + countSpecialCharacters(post).size();
+            System.out.println("Special Character: " + placeInFeatureVector);
+            cnt++;
+            //   }
+
+            ArrayList<ArrayList<Float>> featureVectorList = user.getFeatureVectorPosList();
+
+            int numberOfPosts = user.getPosts().size();
+            int nrOfFeatures = featureVectorList.get(0).size();
+            featureVector = new ArrayList<>(Collections.nCopies(nrOfFeatures, 0.0f));
+            // Now we average over all posts to create a single feature vector for each alias
+            for (int i = 0; i < nrOfFeatures; i++) {
+                float value = 0.0f;
+                for (int j = 0; j < numberOfPosts; j++) {
+                    value += featureVectorList.get(j).get(i);
+                }
+                value /= numberOfPosts;
+                featureVector.set(i, value);
+            }
+            user.setFeatureVector(featureVector);
+            //featVectorForAllAliases.add(featureVector);
         }
         return featureVector;
         //normalizeFeatureVector();

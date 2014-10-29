@@ -80,7 +80,7 @@ public class StylometricAnalysisMain_SQL {
     }
 
     public void executeAnalysis(String ID) throws IOException, SQLException {
-        //IOReadWrite ioRW = new IOReadWrite();
+        IOReadWrite ioRW = new IOReadWrite();
         Alias user = new Alias();
         String styloJSONfilename = "stylo.json";
         String timeJSONfilename = "timeSeries.json";
@@ -95,7 +95,7 @@ public class StylometricAnalysisMain_SQL {
         user.setPostTime(time);
 
         List<Float> freatuteVector = createFeatureVectors(user);
-        int[] tempTimeFeatureVector = user.getTimeFeatureVector(user.getPostTime());
+        int[] tempTimeFeatureVector = ioRW.getTimeFeatureVector(user.getPostTime());
         double[] timeFeatureVector = normalizedFeatureVector(tempTimeFeatureVector);
 
         returnJSONfile(freatuteVector, styloJSONfilename);

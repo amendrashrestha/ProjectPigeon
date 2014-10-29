@@ -8,6 +8,7 @@ package com.stylometry.stylometry;
 import com.stylometry.controller.StylometricAnalysisMain;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.core.Context;
@@ -63,11 +64,30 @@ public class GenericResource {
 
         JSONObject featureObject = init.executePostAnalysis(firstList);
     }
+    
+    @POST
+    @Path("/returnStylometricJSONSwe")
+    @Produces(MediaType.APPLICATION_JSON)
+    public void returnStylometricJSONSwe(@FormParam("posts") String text1) throws SQLException, IOException {
+        List<String> firstList = new ArrayList<>();
+        firstList.add(text1);
+
+        JSONObject featureObject = init.executePostAnalysisSwed(firstList);
+    }
 
     @POST
     @Path("/returnStylometricJSONForUser")
     public void getStylometricJSONForUser(@FormParam("user") int userID)
-            throws SQLException, IOException {
+            throws SQLException, IOException, ParseException {
+        List<Integer> userList = new ArrayList<Integer>();
+        userList.add(userID);
+        init.executeAnalysis(userList);
+    }
+    
+    @POST
+    @Path("/getStylometricJSONForUserSwe")
+    public void getStylometricJSONForUserSwe(@FormParam("user") int userID)
+            throws SQLException, IOException, ParseException {
         List<Integer> userList = new ArrayList<Integer>();
         userList.add(userID);
         init.executeAnalysis(userList);
@@ -85,7 +105,7 @@ public class GenericResource {
     @Path("/returnStylometricJSONForTwoUser")
     public void getStylometricJSONForTwoUser(@FormParam("user1") int userID1,
             @FormParam("user2") int userID2)
-            throws SQLException, IOException {
+            throws SQLException, IOException, ParseException {
         List<Integer> userList = new ArrayList<Integer>();
         userList.add(userID1);
         userList.add(userID2);

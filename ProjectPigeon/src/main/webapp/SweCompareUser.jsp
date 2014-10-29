@@ -7,6 +7,12 @@
 <%@page import="com.stylometry.model.User"%>
 <%@page import="java.util.List"%>
 <%@page import="com.stylometry.IOHandler.IOReadWrite"%>
+<%@page import="java.sql.SQLException"%>
+<%@page import="java.sql.DriverManager"%>
+<%@page import="java.sql.ResultSetMetaData"%>
+<%@page import="java.sql.Statement"%>
+<%@page import="java.sql.ResultSet"%>
+<%@page import="java.sql.Connection"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -44,13 +50,14 @@
             </nav>
         </div>
         <div id='selectUser'>
-            <h2>Split User</h2>
-            <form method="POST" action="rest/generic/returnSplitUser">
+            <h2>Compare User</h2>
+
+            <form method="POST" action="rest/generic/returnStylometricJSONForTwoUser">
                 <table>
                     <tr>
                         <td>
-                            Select User :
-                            <select id="userID" name="user">
+                            Select User1 :
+                            <select id="UserID1" name="user1" onChange="GetSelectedUser()">
                                 <%
                                     IOReadWrite io = new IOReadWrite();
                                     List<User> userList = io.getAllUsersAsObject();
@@ -62,33 +69,41 @@
                                 <option value="<%=userID%>"><%=userID%></option>
                                 <% }
                                 %>
-                            </select> 
-                            <!--                            <script language = "javascript">
-                                                            function GetSelectedUser() {
-                                                                var dropdownIndex = document.getElementById('UserID').value;
-                                                                window.location.replace("SelectUser.jsp?user=" + dropdownIndex);
-                                                            }
-                                                        </script> -->
+                            </select>  
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <input type="submit" value="Split" id="submit">
+                            Select User2 :
+                            <select id="UserID2" name="user2" onChange="GetSelectedUser()">
+                                <%
+                                    userList = io.returnLimitedSortedUser(userList, userList.size());
+
+                                    for (User user : userList) {
+                                        int userID = user.getId();
+                                %>
+                                <option value="<%=userID%>"><%=userID%></option>
+                                <% }
+                                %>
+                            </select>  
+<!--                            <script language = "javascript">
+                                function GetSelectedUser() {
+                                    var dropdownIndex = document.getElementById('UserID2').value;
+                                    window.location.replace("SelectUser.jsp?user=" + dropdownIndex);
+                                }
+                            </script>-->
                         </td>
                     </tr>
-
                 </table>
+                <input type="submit" value="Compare" id="submit">
             </form>
         </div>
 
-        <div id = "styloContainer">
+        <div id = "styloContainer" style= "height: 400px">
             <script type="text/javascript" src="utilities/styloChartForMultipleUser.js"></script>
         </div>
-        <div id = "timeContainer">
+        <div id = "timeContainer" style= "height: 400px">
             <script type="text/javascript" src="utilities/timeChartForMultipleUser.js"></script>
         </div>
-<!--        <div id = "timeFVContainer">
-            <script type="text/javascript" src="utilities/timeFVChartForMultipleUser.js"></script>
-        </div>-->
     </body>
 </html>

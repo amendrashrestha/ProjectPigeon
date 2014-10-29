@@ -4,29 +4,24 @@
     Author     : amendrashrestha
 --%>
 
-<%@page import="java.sql.SQLException"%>
-<%@page import="java.sql.DriverManager"%>
-<%@page import="java.sql.ResultSetMetaData"%>
-<%@page import="java.sql.Statement"%>
-<%@page import="java.sql.ResultSet"%>
-<%@page import="java.sql.Connection"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>English Alias Sensor</title>
+        <title>Swedish Alias Sensor</title>
         <link rel="stylesheet" type="text/css" href="utilities/reset.css">
         <link rel="stylesheet" type="text/css" href="utilities/body.css">
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
         <script type="text/javascript" src="utilities/highcharts.js"></script>
-        <script src="http://code.highcharts.com/modules/exporting.js"></script>
+         <script src="http://code.highcharts.com/modules/exporting.js"></script>
     </head>
     <body>
-        <nav>
+        <div id='menu'>
+            <nav>
                 <ul>
-                    <li><a href="index.jsp">Home</a></li>
-                    <li><a href="English.jsp">English</a>
+                    <li><a href="index.jsp">Hem</a></li>
+                    <li><a href="English.jsp">Engelska</a>
                         <ul>
                             <li><a href="WriteText.jsp">Write Text</a></li>
                             <li><a href="SelectUser.jsp">Select User</a></li>
@@ -44,17 +39,17 @@
                     </li>
                 </ul>
             </nav>
-
+        </div>
         <div id= "textBox">
-            <h2>Write Text</h2>
+            <h2>Skriv Text</h2>
             <table>
                 <tr>
                     <td>
                         <div id = "txtForm">
-                            <form action="rest/generic/returnStylometricJSON" method="post">
+                            <form action="rest/generic/returnStylometricJSONSwe" method="post">
                                 <table>
                                     <tr>
-                                        <td><textarea name="posts" ROWS="15" COLS="100" onclick="this.value = '';">This is a little test.</textarea>
+                                        <td><textarea name="posts" ROWS="15" COLS="100" onclick="this.value = '';">Skriv gärna en text.</textarea>
                                         </td>
                                     </tr>
                                     <tr>
@@ -72,7 +67,7 @@
         </div>
 
         <div id = "styloContainer" style= "height: 400px">
-            <script type="text/javascript" src="utilities/styloChart.js"></script>
+            <script type="text/javascript" src="utilities/SweStyloChart.js"></script>
         </div>
     </body>
 </html>

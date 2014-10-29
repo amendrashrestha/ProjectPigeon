@@ -63,12 +63,12 @@
                                 <% }
                                 %>
                             </select> 
-                            <!--                            <script language = "javascript">
-                                                            function GetSelectedUser() {
-                                                                var dropdownIndex = document.getElementById('UserID').value;
-                                                                window.location.replace("SelectUser.jsp?user=" + dropdownIndex);
-                                                            }
-                                                        </script> -->
+<!--                            <script language = "javascript">
+                                function GetSelectedUser() {
+                                    var dropdownIndex = document.getElementById('UserID').value;
+                                    window.location.replace("SelectUser.jsp?user=" + dropdownIndex);
+                                }
+                            </script> -->
                         </td>
                     </tr>
                     <tr>
@@ -87,8 +87,5 @@
         <div id = "timeContainer">
             <script type="text/javascript" src="utilities/timeChartForMultipleUser.js"></script>
         </div>
-<!--        <div id = "timeFVContainer">
-            <script type="text/javascript" src="utilities/timeFVChartForMultipleUser.js"></script>
-        </div>-->
     </body>
 </html>

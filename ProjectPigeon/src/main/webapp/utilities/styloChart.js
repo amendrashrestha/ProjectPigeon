@@ -14,7 +14,7 @@ $(document).ready(function () {
             min: 0
         },
         xAxis: {
-            min: 1,
+            min: 0,
             tickInterval: 10,
             tickmarkPlacement: 'on'
         },
@@ -36,15 +36,16 @@ $(document).ready(function () {
         chart.yAxis[0].setTitle({text: "Percentage of Post"});
         chart.xAxis[0].setTitle({text: "Types of features"});
     };
-    
-    $.getJSON("utilities/stylo1.json", function (data) {
 
+    $.getJSON("utilities/stylo1.json", function (data) {
         var result = [];
-        var user = "User1";
         var color = 'green';
 
         for (var i in data)
-            result.push([i, data[i]]);
-        drawChart(result, user, color);
+            result.push([data[i]]);
+
+        var user = "User " + result[0];
+        var result1 = result.splice(1, 361);
+        drawChart(result1, user, color);
     });
 });

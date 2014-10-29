@@ -35,10 +35,10 @@
                     </li>
                     <li><a href="Swedish.jsp">Svenska</a>
                         <ul>
-                            <li><a href="#">Skriv Text</a></li>
-                            <li><a href="#">Välja User</a></li>
-                            <li><a href="#">Jämfor Users</a></li>
-                            <li><a href="#">Sträck User</a></li>
+                            <li><a href="SweWriteText.jsp">Skriv Text</a></li>
+                            <li><a href="SweSelectUser.jsp">Välja User</a></li>
+                            <li><a href="SweCompareUser.jsp">Jämfor Users</a></li>
+                            <li><a href="SweSplitUser.jsp">Sträck User</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -46,7 +46,7 @@
         </div>
         <div id='selectUser'>
             <h2>Select User</h2>
-            <form method="POST" action="rest/generic/returnStylometricJSONForUser">
+            <form method="POST" action="rest/generic/returnStylometricJSONForUser" id='myform'>
                 <table>
                     <tr>
                         <td>
@@ -63,7 +63,7 @@
                                 <option value="<%=userID%>"><%=userID%></option>
                                 <% }
                                 %>
-                            </select>                             
+                            </select>
                         </td>
                     </tr>
                     <tr>
@@ -80,6 +80,9 @@
         </div>
         <div id = "timeContainer">
             <script type="text/javascript" src="utilities/timeChart.js"></script>
+        </div>
+        <div id = "timeFVContainer">
+            <script type="text/javascript" src="utilities/timeFVChart.js"></script>
         </div>
     </body>
 </html>

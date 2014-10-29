@@ -42,21 +42,26 @@ $(document).ready(function () {
 
     $.getJSON("utilities/timeSeries1.json", function (data) {
         var result = [];
-        var user = "User1";
-        var color = 'orange';
+        var color = '#0073F7';
 
         for (var i in data)
-            result.push([i, data[i]]);
-        drawChart(result, user, color);
+            result.push([data[i]]);
+        
+        var user = "User " + result[0];
+        var result1 = result.splice(1, 24);
+        
+        drawChart(result1, user, color);
     });
 
     $.getJSON("utilities/timeSeries2.json", function (data) {
         var result = [];
-        var user = "User2";
-        var color = "blue";
+        var color = "#1DAB0A";
 
         for (var i in data)
-            result.push([i, data[i]]);
-        drawChart(result, user, color);
+            result.push([data[i]]);
+        
+        var user = "User " + result[0];
+        var result1 = result.splice(1, 24);
+        drawChart(result1, user, color);
     });
 });

@@ -7,15 +7,15 @@ $(document).ready(function () {
 
     var options = {
         chart: {
-            renderTo: 'timeContainer',
+            renderTo: 'styloContainer',
             type: 'spline'
         },
         yAxis: {
             min: 0
         },
         xAxis: {
-            categories: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
-            tickInterval: 1,
+            min: 1,
+            tickInterval: 10,
             tickmarkPlacement: 'on'
         },
         series: []
@@ -26,31 +26,25 @@ $(document).ready(function () {
         var newSeriesData = {
             name: name,
             data: data,
-            color: color,
-            dashStyle: 'longdash'
+            color: color
         };
 
         options.series.push(newSeriesData);
 
         var chart = new Highcharts.Chart(options);
-        chart.setTitle({text: 'Time Analysis'});
+        chart.setTitle({text: 'Stylometry Analysis'});
         chart.yAxis[0].setTitle({text: "Percentage of Post"});
-        chart.xAxis[0].setTitle({text: "Hour of Day"});
-
+        chart.xAxis[0].setTitle({text: "Types of features"});
     };
+    
+    $.getJSON("utilities/styloSwe.json", function (data) {
 
-
-    $.getJSON("utilities/timeSeries1.json", function (data) {
         var result = [];
-       
-        var color = 'blue';
-         
-        for (var i in data)
-            result.push([data[i]]);
-        
-        var user = "User " + result[0];
-        var result1 = result.splice(1,24);
+        var user = "User1";
+        var color = 'green';
 
-        drawChart(result1, user, color);
+        for (var i in data)
+            result.push([i, data[i]]);
+        drawChart(result, user, color);
     });
 });

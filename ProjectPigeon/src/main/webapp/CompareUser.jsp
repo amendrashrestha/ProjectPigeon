@@ -40,10 +40,10 @@
                     </li>
                     <li><a href="Swedish.jsp">Svenska</a>
                         <ul>
-                            <li><a href="#">Skriv Text</a></li>
-                            <li><a href="#">Välja User</a></li>
-                            <li><a href="#">Jämfor Users</a></li>
-                            <li><a href="#">Sträck User</a></li>
+                            <li><a href="SweWriteText.jsp">Skriv Text</a></li>
+                            <li><a href="SweSelectUser.jsp">Välja User</a></li>
+                            <li><a href="SweCompareUser.jsp">Jämfor Users</a></li>
+                            <li><a href="SweSplitUser.jsp">Sträck User</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -57,7 +57,7 @@
                     <tr>
                         <td>
                             Select User1 :
-                            <select id="UserID1" name="user1" onChange="GetSelectedUser()">
+                            <select id="UserID1" name="user1">
                                 <%
                                     IOReadWrite io = new IOReadWrite();
                                     List<User> userList = io.getAllUsersAsObject();
@@ -75,7 +75,7 @@
                     <tr>
                         <td>
                             Select User2 :
-                            <select id="UserID2" name="user2" onChange="GetSelectedUser()">
+                            <select id="UserID2" name="user2">
                                 <%
                                     userList = io.returnLimitedSortedUser(userList, userList.size());
 
@@ -86,12 +86,6 @@
                                 <% }
                                 %>
                             </select>  
-<!--                            <script language = "javascript">
-                                function GetSelectedUser() {
-                                    var dropdownIndex = document.getElementById('UserID2').value;
-                                    window.location.replace("SelectUser.jsp?user=" + dropdownIndex);
-                                }
-                            </script>-->
                         </td>
                     </tr>
                 </table>
@@ -99,11 +93,14 @@
             </form>
         </div>
 
-        <div id = "styloContainer" style= "height: 400px">
+        <div id = "styloContainer">
             <script type="text/javascript" src="utilities/styloChartForMultipleUser.js"></script>
         </div>
-        <div id = "timeContainer" style= "height: 400px">
+        <div id = "timeContainer">
             <script type="text/javascript" src="utilities/timeChartForMultipleUser.js"></script>
+        </div>
+        <div id = "timeFVContainer">
+            <script type="text/javascript" src="utilities/timeFVChartForMultipleUser.js"></script>
         </div>
     </body>
 </html>

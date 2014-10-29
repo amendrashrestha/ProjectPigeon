@@ -14,6 +14,7 @@ public class Alias {
 
     private List<Float> featureVector;
     private int nrOfFeatures;
+    private int nrOfSwedishFeatures;
     private String user;
     private String type;
     private ArrayList<ArrayList<Float>> featureVectorPostList;
@@ -30,6 +31,8 @@ public class Alias {
 
     public Alias() {
         setNrOfFeatures(360);
+        setNrOfSwedishFeatures(456);
+        
     }
 
     @Override
@@ -42,6 +45,18 @@ public class Alias {
         for (int j = 0; j < posts.size(); j++) {
             ArrayList<Float> featList = new ArrayList<Float>();
             for (int i = 0; i < nrOfFeatures; i++) {
+                featList.add(0.0f);
+            }
+            list.add(featList);
+        }
+        return list;
+    }
+    
+    public ArrayList<ArrayList<Float>> initializeFeatureVectorPostListForSwe() {
+        ArrayList<ArrayList<Float>> list = new ArrayList<ArrayList<Float>>();
+        for (int j = 0; j < posts.size(); j++) {
+            ArrayList<Float> featList = new ArrayList<Float>();
+            for (int i = 0; i < nrOfSwedishFeatures; i++) {
                 featList.add(0.0f);
             }
             list.add(featList);
@@ -108,7 +123,7 @@ public class Alias {
         return nrOfFeatures;
     }
 
-    public void setNrOfFeatures(int nrOfFeatures) {
+    private void setNrOfFeatures(int nrOfFeatures) {
         this.nrOfFeatures = nrOfFeatures;
     }
 
@@ -120,20 +135,9 @@ public class Alias {
         this.user = user;
     }
 
-    public int[] getTimeVector(List<String> postTime) throws SQLException {
+    
 
-        int[] rr = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
-        for (String postHour : postTime) {
-            String[] time = postHour.split(":");
-            int hr = Integer.parseInt(time[0]);
-            rr[hr]++;
-        }
-        return rr;
-    }
-
-    public int[] getTimeVectorArray(List postTime) throws SQLException {
+    /*public int[] getTimeVectorArray(List postTime) throws SQLException {
 
         int[] rr = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -157,7 +161,7 @@ public class Alias {
             rr[hr]++;
         }
         return rr;
-    }
+    }*/
 
     public void setPostTime(List postTime) {
         this.postTime = postTime;
@@ -187,5 +191,19 @@ public class Alias {
 
     public List getPostDate() {
         return postDate;
+    }
+
+    /**
+     * @return the nrOfSwedishFeatures
+     */
+    public int getNrOfSwedishFeatures() {
+        return nrOfSwedishFeatures;
+    }
+
+    /**
+     * @param nrOfSwedishFeatures the nrOfSwedishFeatures to set
+     */
+    private void setNrOfSwedishFeatures(int nrOfSwedishFeatures) {
+        this.nrOfSwedishFeatures = nrOfSwedishFeatures;
     }
 }
