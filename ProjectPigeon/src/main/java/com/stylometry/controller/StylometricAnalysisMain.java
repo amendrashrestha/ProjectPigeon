@@ -111,17 +111,17 @@ public class StylometricAnalysisMain {
             int[] hourOfDayFeatureVector = io.returnNormalizedVector(temphourOfDayFeatureVector);
             
             int[] tempTimeFeatureVector = io.getUserTimeProfile(user);
-            int[] timeFeatureVector = io.returnNormalizedVector(tempTimeFeatureVector);
+            //int[] timeFeatureVector = io.returnNormalizedVector(tempTimeFeatureVector);
 
             returnJSONfile(freatuteVector, styloJSONfilename, userID);
             returnJSONfile(hourOfDayFeatureVector, timeJSONfilename, userID);
-            returnJSONfile(timeFeatureVector, timeFVJSONfilename, userID);
+            returnJSONfile(tempTimeFeatureVector, timeFVJSONfilename, userID);
 
             i++;
         }
     }
 
-    public void splitUserAnalysis(int UserID) throws IOException, SQLException {
+    public void splitUserAnalysis(int UserID) throws IOException, SQLException, ParseException {
 
         int i = 1;
         loadFunctionWords(IOProperties.FUNCTION_WORDS_PATH);
@@ -131,18 +131,20 @@ public class StylometricAnalysisMain {
 
             String styloJSONfilename = "stylo" + i + ".json";
             String timeJSONfilename = "timeSeries" + i + ".json";
+            String timeFVJSONfilename = "timeFVSeries" + i + ".json";
 
-            List userPostTime = alias.getPostTime();
+            List<String> userPostTime = alias.getPostTime();
+            List<String> userPostDate = alias.getPostDate();
+            
+            int[] userTimeFeatureVector = io.getUserTimeProfile(userPostTime, userPostDate);
 
             List<Float> freatuteVector = createFeatureVectors(alias);
             int[] temphourOfDayFeatureVector = io.getTimeVector(userPostTime);
             int[] hourOfDayFeatureVector = io.returnNormalizedVector(temphourOfDayFeatureVector);
-            
-//            int[] tempTimeFeatureVector = io.getUserTimeProfile(userPostTime);
-//            int[] timeFeatureVector = io.returnNormalizedVector(tempTimeFeatureVector);
 
             returnJSONfile(freatuteVector, styloJSONfilename, UserID);
             returnJSONfile(hourOfDayFeatureVector, timeJSONfilename, UserID);
+            returnJSONfile(userTimeFeatureVector, timeFVJSONfilename, UserID);
 
             i++;
         }

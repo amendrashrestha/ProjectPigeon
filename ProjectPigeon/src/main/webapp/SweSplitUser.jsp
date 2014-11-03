@@ -35,9 +35,9 @@
                     <li><a href="Swedish.jsp">Svenska</a>
                         <ul>
                             <li><a href="SweWriteText.jsp">Skriv Text</a></li>
-                            <li><a href="SweSelectUser.jsp">Välja User</a></li>
+<!--                            <li><a href="SweSelectUser.jsp">Välja User</a></li>
                             <li><a href="SweCompareUser.jsp">Jämfor Users</a></li>
-                            <li><a href="SweSplitUser.jsp">Sträck User</a></li>
+                            <li><a href="SweSplitUser.jsp">Sträck User</a></li>-->
                         </ul>
                     </li>
                 </ul>

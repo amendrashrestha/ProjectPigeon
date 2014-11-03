@@ -1,5 +1,6 @@
 package com.stylometry.IOHandler;
 
+import com.stylometry.controller.ClusterCommons;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -28,7 +29,11 @@ import com.stylometry.model.Posts;
 import com.stylometry.model.ReturnSortedUserList;
 import com.stylometry.model.User;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import org.apache.commons.lang.ArrayUtils;
 
 /**
@@ -821,10 +826,13 @@ public class IOReadWrite {
         return aliasList;
     }
 
-    public List<User> returnDividedUserForTimeFeat(int divisionFlag, List<User> usersList, User user) throws FileNotFoundException, IOException {
+    public List<User> returnDividedUserForTimeFeat(User user) throws FileNotFoundException, IOException {
+
         int UserID = user.getId();
         User userA = new User();
         User userB = new User();
+
+        List<User> userList = new ArrayList<>();
         List<Posts> postListA = new ArrayList<>();
         List<Posts> postListB = new ArrayList<>();
 
@@ -836,29 +844,27 @@ public class IOReadWrite {
         for (int i = 0; i < userPostSize; i++) {
             Posts individualPost = (Posts) userPost.get(i);
 
-            if (i % 2 == 0 && divisionFlag == 2) {
+            if (i % 2 == 0) {
 //            if (i <= halfPostSize && divisionFlag == 2) {
                 postListA.add(individualPost);
             } else if (i % 2 != 0) {
 //            } else if (i > halfPostSize) {
                 postListB.add(individualPost);
             } else {
-                continue;
             }
         }
 
-        if (divisionFlag == 2) {
-            userA.setId(UserID);
-            userA.setType("A");
-            userA.setUserPost(postListA);
-            usersList.add(0, userA);
-        }
+        userA.setId(UserID);
+        userA.setType("A");
+        userA.setUserPost(postListA);
+        userList.add(0, userA);
+
         userB.setId(UserID);
         userB.setType("B");
         userB.setUserPost(postListB);
-        usersList.add(userB);
+        userList.add(userB);
 
-        return usersList;
+        return userList;
     }
 
     public Alias convertTxtFileToAliasObjAndDivide(String basePath, String directoryName,
@@ -975,6 +981,26 @@ public class IOReadWrite {
         return combined3;
     }
 
+    public int[] getUserTimeProfile(List<String> userPostTime, List<String> userPostDate) throws ParseException {
+
+        int[] hourOfDay = getHourOfDayVector(userPostTime);
+        int[] timeOfInterval = getPeriodVector(userPostTime);
+
+        int[] dayOfWeek = getDayofWeekVector(userPostDate);
+        int[] typeOfWeek = getTypeOfWeekVector(userPostDate);
+
+        hourOfDay = returnNormalizedVector(hourOfDay);
+        timeOfInterval = returnNormalizedVector(timeOfInterval);
+        dayOfWeek = returnNormalizedVector(dayOfWeek);
+        typeOfWeek = returnNormalizedVector(typeOfWeek);
+
+        int[] combined = ArrayUtils.addAll(hourOfDay, timeOfInterval);
+        int[] combined1 = ArrayUtils.addAll(combined, dayOfWeek);
+        int[] combined3 = ArrayUtils.addAll(combined1, typeOfWeek);
+
+        return combined3;
+    }
+
     public int[] getTimeVector(List<String> postTime) throws SQLException {
 
         int[] rr = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -1036,5 +1062,68 @@ public class IOReadWrite {
             timeVector[index] = temp;
         }
         return timeVector;
+    }
+
+    private int[] getHourOfDayVector(List<String> userPost) {
+        int[] postHourVector = new int[24];
+        for (String post : userPost) {
+            Timestamp ts = Timestamp.valueOf(new SimpleDateFormat("yyyy-MM-dd ").format(new Date()).concat(post));
+            int timeCategory = ts.getHours();
+            postHourVector[timeCategory] = postHourVector[timeCategory] + 1;
+        }
+        return postHourVector;
+    }
+
+    private int[] getPeriodVector(List<String> userPost) {
+        ClusterCommons cc = new ClusterCommons();
+        int[] postPeriodVector = new int[6];
+
+        for (String post : userPost) {
+            Timestamp ts = Timestamp.valueOf(new SimpleDateFormat("yyyy-MM-dd ").format(new Date()).concat(post));
+            int timeCategory = cc.getTimeCategory(ts.getHours());
+            if (timeCategory < 6) {
+                postPeriodVector[timeCategory] = postPeriodVector[timeCategory] + 1;
+            }
+        }
+        return postPeriodVector;
+    }
+
+    private int[] getDayofWeekVector(List<String> userPost) throws ParseException {
+        int[] dayOfWeekVector = new int[7];
+        for (String post : userPost) {
+
+            int DayOfWeek = getDayOfWeek(post) - 1;
+            dayOfWeekVector[DayOfWeek] = dayOfWeekVector[DayOfWeek] + 1;
+        }
+        return dayOfWeekVector;
+    }
+
+    private int[] getTypeOfWeekVector(List<String> userPostDate) throws ParseException {
+        int[] typeOfWeekVector = new int[2];
+        for (String post : userPostDate) {
+
+            int dayOfWeek = getDayOfWeek(post);
+            int typeOfWeek = getTypeOfWeek(dayOfWeek);
+
+            typeOfWeekVector[typeOfWeek] = typeOfWeekVector[typeOfWeek] + 1;
+        }
+        return typeOfWeekVector;
+    }
+
+    private int getDayOfWeek(String date) throws ParseException {
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-mm-dd");
+        Date dt1 = format1.parse(date);
+        c.setTime(dt1);
+        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+        return dayOfWeek;
+    }
+
+    private int getTypeOfWeek(int day) throws ParseException {
+        if (day >= 2 && day <= 6) {
+            return 0;
+        } else {
+            return 1;
+        }
     }
 }

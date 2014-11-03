@@ -23,9 +23,10 @@
         <script>
             $(document).ready(function () {
                 var result = new Array();
-                $.getJSON("utilities/timeSeries1.json", function (data) {
+                $.getJSON("utilities/timeFVSeries1.json", function (data) {
                     for (var i in data)
                         result.push(data[i]);
+                    var result1 = result.splice(1,39);
 
                     var colors = Highcharts.getOptions().colors;
 
@@ -47,7 +48,9 @@
                             min: 0
                         },
                         xAxis: {
-                            categories: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+                            categories: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 
+                17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 
+            33, 34, 35, 36, 37, 38, 39],
                             tickInterval: 1,
                             tickmarkPlacement: 'on'
                         },
@@ -59,11 +62,11 @@
                     function genData() {
                         var d = [];
                         i = 0;
-                        var result1 = result;
-                        while (i < result1.length) {
+                        var result2 = result1;
+                        while (i < result2.length) {
                             var v = Math.round((i + 1) / 4);
                             d.push({
-                                y: result1[i],
+                                y: result2[i],
                                 segmentColor: color(v)
                             });
                             i++;

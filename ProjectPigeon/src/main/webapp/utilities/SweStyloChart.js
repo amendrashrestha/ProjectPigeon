@@ -14,8 +14,8 @@ $(document).ready(function () {
             min: 0
         },
         xAxis: {
-            min: 1,
-            tickInterval: 10,
+            min: 0,
+            tickInterval: 30,
             tickmarkPlacement: 'on'
         },
         series: []
@@ -44,7 +44,9 @@ $(document).ready(function () {
         var color = 'green';
 
         for (var i in data)
-            result.push([i, data[i]]);
-        drawChart(result, user, color);
+            result.push([data[i]]);
+        
+        var result1 = result.splice(1, 458);
+        drawChart(result1, user, color);
     });
 });
