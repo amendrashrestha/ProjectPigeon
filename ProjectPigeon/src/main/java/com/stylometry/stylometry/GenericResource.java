@@ -96,7 +96,7 @@ public class GenericResource {
     @POST
     @Path("/returnSplitUser")
     public void getSplitUser(@FormParam("user") int userID)
-            throws SQLException, IOException {
+            throws SQLException, IOException, ParseException {
         
         init.splitUserAnalysis(userID);
     }
@@ -114,6 +114,7 @@ public class GenericResource {
 
     @POST
     @Path("/display")
+    @Produces("application/json")
     public Response returnStylometricJSON(
             @FormParam("posts") String posts) throws IOException {
 

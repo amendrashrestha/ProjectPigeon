@@ -28,8 +28,8 @@ public class Alias {
     }
 
     public Alias() {
-        setNrOfFeatures(360);
-        setNrOfSwedishFeatures(456);
+        setNrOfFeatures(361); //english feature vector size
+        setNrOfSwedishFeatures(456); //swedish feature vector size
         
     }
 

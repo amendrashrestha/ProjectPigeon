@@ -7,20 +7,15 @@ $(document).ready(function () {
 
     var options = {
         chart: {
-            renderTo: 'timeFVContainer',
+            renderTo: 'restStyloContainer',
             type: 'spline'
-        },
-        credits: {
-            enabled: false
         },
         yAxis: {
             min: 0
         },
         xAxis: {
-            categories: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 
-                17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 
-            33, 34, 35, 36, 37, 38, 39],
-            tickInterval: 1,
+            min: 1,
+            tickInterval: 2,
             tickmarkPlacement: 'on'
         },
         series: []
@@ -38,24 +33,33 @@ $(document).ready(function () {
         options.series.push(newSeriesData);
 
         var chart = new Highcharts.Chart(options);
-        chart.setTitle({text: 'Time Analysis'});
+        chart.setTitle({text: 'Stylometry Analysis'});
         chart.yAxis[0].setTitle({text: "Percentage of Post"});
-        chart.xAxis[0].setTitle({text: "Time Feature Vector"});
+        chart.xAxis[0].setTitle({text: "Types of features"});
 
     };
 
 
-    $.getJSON("utilities/timeFVSeries1.json", function (data) {
+    $.getJSON("utilities/stylo1.json", function (data) {
         var result = [];
-       
-        var color = 'orange';
-         
+        var color = '#0073F7';
+
+        for (var i in data)
+            result.push([data[i]]);
+        var user = "User " + result[0];
+        var result1 = result.splice(294, 360);
+        drawChart(result1, user, color);
+    });
+
+    $.getJSON("utilities/stylo2.json", function (data) {
+        var result = [];        
+        var color = "red";
+
         for (var i in data)
             result.push([data[i]]);
         
         var user = "User " + result[0];
-        var result1 = result.splice(1,39);
-
+        var result1 = result.splice(294, 360);
         drawChart(result1, user, color);
     });
 });

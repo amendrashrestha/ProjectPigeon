@@ -11,7 +11,7 @@
             <nav>
                 <ul>
                     <li><a href="index.jsp">Home</a></li>
-                    <li><a href="English.jsp">English</a>
+                    <li><a href="#">English</a>
                         <ul>
                             <li><a href="WriteText.jsp">Write Text</a></li>
                             <li><a href="SelectUser.jsp">Select User</a></li>
@@ -19,7 +19,7 @@
                             <li><a href="SplitUser.jsp">Split User</a></li>
                         </ul>
                     </li>
-                    <li><a href="Swedish.jsp">Svenska</a>
+                    <li><a href="#">Svenska</a>
                         <ul>
                             <li><a href="SweWriteText.jsp">Skriv Text</a></li>
 <!--                            <li><a href="SweSelectUser.jsp">Välja User</a></li>
@@ -31,7 +31,7 @@
             </nav>
             <div id="container">
                 <p>
-                    <img id="logo" src = "utilities/LogoHome1.png" alt="">
+                    <img id="logo" src = "utilities/LogoHome.png" alt="">
                 <h1>Alias Sensor</h1>
                 Alias Sensor is an interactive information visualization prototype. 
                 The prototype is capable of visualizing and analyzing user's posts and post time in a discussion board.

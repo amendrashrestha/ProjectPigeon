@@ -3,20 +3,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-$(document).ready(function () {
-
+function DigitCharGraph(){
     var options = {
         chart: {
-            renderTo: 'styloContainer',
+            renderTo: 'tab4C',
             type: 'spline'
         },
         yAxis: {
             min: 0
         },
         xAxis: {
+            categories: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14',
+             '15', '16', '17', '18', '19', '20', '21'],
             min: 0,
-            tickInterval: 30,
+            tickInterval: 1,
             tickmarkPlacement: 'on'
+        },
+       credits: {
+            enabled: false
         },
         series: []
     };
@@ -32,21 +36,20 @@ $(document).ready(function () {
         options.series.push(newSeriesData);
 
         var chart = new Highcharts.Chart(options);
-        chart.setTitle({text: 'Stylometry Analysis'});
+        chart.setTitle({text: 'Digit and Character Analysis'});
         chart.yAxis[0].setTitle({text: "Percentage of Post"});
-        chart.xAxis[0].setTitle({text: "Types of features"});
+        chart.xAxis[0].setTitle({text: "Feature Vector"});
     };
-    
-    $.getJSON("utilities/styloSwe.json", function (data) {
 
+    $.getJSON("utilities/stylo1.json", function (data) {
         var result = [];
-        var user = "User1";
         var color = 'green';
 
         for (var i in data)
             result.push([data[i]]);
-        
-        var result1 = result.splice(1, 458);
+
+        var user = "User " + result[0];
+        var result1 = result.splice(340, 21);
         drawChart(result1, user, color);
     });
-});
+}

@@ -3,19 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-$(document).ready(function () {
+function periodofDayGraph() {
 
     var options = {
         chart: {
-            renderTo: 'styloContainer',
+            renderTo: 'timetab2C',
             type: 'spline'
+        },
+        credits: {
+            enabled: false
         },
         yAxis: {
             min: 0
         },
         xAxis: {
-            min: 0,
-            tickInterval: 10,
+            categories: [1, 2, 3, 4, 5, 6],
+            tickInterval: 1,
             tickmarkPlacement: 'on'
         },
         series: []
@@ -26,26 +29,30 @@ $(document).ready(function () {
         var newSeriesData = {
             name: name,
             data: data,
-            color: color
+            color: color,
+            dashStyle: 'longdash'
         };
 
         options.series.push(newSeriesData);
 
         var chart = new Highcharts.Chart(options);
-        chart.setTitle({text: 'Stylometry Analysis'});
+        chart.setTitle({text: 'Period of Day Analysis'});
         chart.yAxis[0].setTitle({text: "Percentage of Post"});
-        chart.xAxis[0].setTitle({text: "Types of features"});
+        chart.xAxis[0].setTitle({text: "Feature Vector"});
+
     };
 
-    $.getJSON("utilities/stylo1.json", function (data) {
+
+    $.getJSON("utilities/timeFVSeries1.json", function (data) {
         var result = [];
-        var color = 'green';
+        var color = '#0073F7';
 
         for (var i in data)
             result.push([data[i]]);
-
+        
         var user = "User " + result[0];
-        var result1 = result.splice(1, 361);
+        var result1 = result.splice(25, 6);
+        
         drawChart(result1, user, color);
     });
-});
+}

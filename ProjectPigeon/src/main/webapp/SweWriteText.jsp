@@ -66,8 +66,46 @@
             </table>
         </div>
 
-        <div id = "styloContainer" style= "height: 400px">
-            <script type="text/javascript" src="utilities/SweStyloChart.js"></script>
+        <div id = "styloContainer">
+            <script type="text/javascript" src="utilities/showTab.js"></script>
+            <ul id="tabs">
+                <li><a id="tab1">Function Words</a></li>
+                <li><a id="tab2">Word Length</a></li>
+                <li><a id="tab3">Alphabet</a></li>
+                <li><a id="tab4" >Digit & Characters</a></li>
+            </ul>
+
+            <div class="container1" id="tab1C">Function Words Graph
+                <script type="text/javascript" src="utilities/SweFunWordStyloChart.js"></script>
+                <script>
+                                            $('#tab1').click(function () {
+                                                sweFunctionWordGraph();
+                                            });
+                </script>
+
+            </div>
+            <div class="container1" id="tab2C">Characters Graph
+                <script type="text/javascript" src="utilities/SweWordCountStyloChart.js"></script>
+                <script>
+                                            $('#tab2').click(function () {
+                                                SweWordLengthGraph();
+                                            });
+                </script>           
+            </div>
+            <div class="container1" id="tab3C">Alphabet Graph</div>
+            <script type="text/javascript" src="utilities/SweAlphabetStyloChart.js"></script>
+            <script>
+                                        $('#tab3').click(function () {
+                                            SweAlphabetGraph();
+                                        });
+            </script>  
+            <div class="container1" id="tab4C">Digit and Characters Graph</div>
+            <script type="text/javascript" src="utilities/SweDigitCharStyloChart.js"></script>
+            <script>
+                                        $('#tab4').click(function () {
+                                            SweDigitCharGraph();
+                                        });
+            </script> 
         </div>
     </body>
 </html>

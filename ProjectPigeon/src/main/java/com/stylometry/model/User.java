@@ -652,7 +652,7 @@ public class User {
 
     private int getDayOfWeek(String date) throws ParseException {
         Calendar c = Calendar.getInstance();
-        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-mm-dd");
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
         Date dt1 = format1.parse(date);
         c.setTime(dt1);
         int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);

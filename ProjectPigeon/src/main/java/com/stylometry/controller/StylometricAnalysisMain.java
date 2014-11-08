@@ -320,8 +320,10 @@ public class StylometricAnalysisMain {
      * @return
      */
     public static List<String> extractWords(String text) {
+        text = text.toLowerCase();
         List<String> wordList = new ArrayList<String>();
         String[] words = text.split("\\s+");
+        
         wordList.addAll(Arrays.asList(words)); // words[i] = words[i].replaceAll("[^\\w]", "");
         return wordList;
     }
@@ -382,7 +384,36 @@ public class StylometricAnalysisMain {
      */
     public ArrayList<Float> countCharactersAZ(String post) {
         post = post.toLowerCase();	// Upper or lower case does not matter, so make all letters lower case first...
-        char[] ch = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+        char[] ch = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 
+            'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+        ArrayList<Float> tmpCounter = new ArrayList<>(Collections.nCopies(ch.length, 0.0f));
+        for (int i = 0; i < ch.length; i++) {
+            int value = countOccurrences(post, ch[i]);
+            tmpCounter.set(i, (float) value);
+        }
+        // "Normalize" the values by dividing with total nr of characters in the post (excluding white spaces)
+        int length = post.replaceAll(" ", "").length();
+        if (0 == length) {
+            length = 1;
+        }
+        for (int i = 0; i < tmpCounter.size(); i++) {
+            tmpCounter.set(i, tmpCounter.get(i) / (float) length);
+        }
+        return tmpCounter;
+    }
+    
+    /**
+     * Create a list containing the number of occurrences of Swedish language
+     * alphabet from a to z in the text
+     *
+     * @param post
+     * @return
+     */
+    public ArrayList<Float> countSweCharactersAZ(String post) {
+        post = post.toLowerCase();	// Upper or lower case does not matter, so make all letters lower case first...
+        char[] ch = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
+            'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+            'å','ö','ä'};
         ArrayList<Float> tmpCounter = new ArrayList<>(Collections.nCopies(ch.length, 0.0f));
         for (int i = 0; i < ch.length; i++) {
             int value = countOccurrences(post, ch[i]);
@@ -407,7 +438,8 @@ public class StylometricAnalysisMain {
      */
     public ArrayList<Float> countSpecialCharacters(String post) {
         post = post.toLowerCase();	// Upper or lower case does not matter, so make all letters lower case first...
-        char[] ch = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '?', '!', ',', ';', ':', '(', ')', '"', '-', '´'};
+        char[] ch = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '?',
+            '!', ',', ';', ':', '(', ')', '"', '-', '\''};
         ArrayList<Float> tmpCounter = new ArrayList<>(Collections.nCopies(ch.length, 0.0f));
         for (int i = 0; i < ch.length; i++) {
             int value = countOccurrences(post, ch[i]);
@@ -547,11 +579,11 @@ public class StylometricAnalysisMain {
 
             user.addToFeatureVectorPostList(countCharactersAZ(post), placeInFeatureVector, cnt);
             placeInFeatureVector = placeInFeatureVector + countCharactersAZ(post).size();
-            System.out.println("DigitNCharacters: " + placeInFeatureVector);
+            System.out.println("Alphabet: " + placeInFeatureVector);
 
             user.addToFeatureVectorPostList(countSpecialCharacters(post), placeInFeatureVector, cnt);
             placeInFeatureVector = placeInFeatureVector + countSpecialCharacters(post).size();
-            System.out.println("Special Character: " + placeInFeatureVector);
+            System.out.println("Digit N Special Character: " + placeInFeatureVector);
             cnt++;
             //   }
 
@@ -602,13 +634,13 @@ public class StylometricAnalysisMain {
             placeInFeatureVector = placeInFeatureVector + countWordLengths(wordsInPost).size();
             System.out.println("WordLengthSize: " + placeInFeatureVector);
 
-            user.addToFeatureVectorPostList(countCharactersAZ(post), placeInFeatureVector, cnt);
-            placeInFeatureVector = placeInFeatureVector + countCharactersAZ(post).size();
-            System.out.println("DigitNCharacters: " + placeInFeatureVector);
+            user.addToFeatureVectorPostList(countSweCharactersAZ(post), placeInFeatureVector, cnt);
+            placeInFeatureVector = placeInFeatureVector + countSweCharactersAZ(post).size();
+            System.out.println("Alphabet: " + placeInFeatureVector);
 
             user.addToFeatureVectorPostList(countSpecialCharacters(post), placeInFeatureVector, cnt);
             placeInFeatureVector = placeInFeatureVector + countSpecialCharacters(post).size();
-            System.out.println("Special Character: " + placeInFeatureVector);
+            System.out.println("Digit N Characters: " + placeInFeatureVector);
             cnt++;
             //   }
 

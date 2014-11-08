@@ -3,25 +3,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-$(document).ready(function () {
-
+function SweWordLengthGraph(){
     var options = {
         chart: {
-            renderTo: 'timeFVContainer',
+            renderTo: 'tab2C',
             type: 'spline'
-        },
-        credits: {
-            enabled: false
         },
         yAxis: {
             min: 0
         },
         xAxis: {
-            categories: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 
-                17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 
-            33, 34, 35, 36, 37, 38, 39],
+            categories: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14',
+             '15', '16', '17', '18', '19', '20'],
+            min: 0,
             tickInterval: 1,
             tickmarkPlacement: 'on'
+        },
+       credits: {
+            enabled: false
         },
         series: []
     };
@@ -31,31 +30,26 @@ $(document).ready(function () {
         var newSeriesData = {
             name: name,
             data: data,
-            color: color,
-            dashStyle: 'longdash'
+            color: color
         };
 
         options.series.push(newSeriesData);
 
         var chart = new Highcharts.Chart(options);
-        chart.setTitle({text: 'Time Analysis'});
+        chart.setTitle({text: 'Word Length Analysis'});
         chart.yAxis[0].setTitle({text: "Percentage of Post"});
-        chart.xAxis[0].setTitle({text: "Time Feature Vector"});
-
+        chart.xAxis[0].setTitle({text: "Feature Vector"});
     };
 
-
-    $.getJSON("utilities/timeFVSeries1.json", function (data) {
+    $.getJSON("utilities/styloSwe.json", function (data) {
         var result = [];
-       
-        var color = 'orange';
-         
+        var color = 'green';
+
         for (var i in data)
             result.push([data[i]]);
-        
-        var user = "User " + result[0];
-        var result1 = result.splice(1,39);
 
+        var user = "User " + result[0];
+        var result1 = result.splice(387, 20);
         drawChart(result1, user, color);
     });
-});
+}

@@ -10,6 +10,9 @@ $(document).ready(function () {
             renderTo: 'timeContainer',
             type: 'spline'
         },
+        credits: {
+            enabled: false
+        },
         yAxis: {
             min: 0
         },
@@ -55,7 +58,7 @@ $(document).ready(function () {
 
     $.getJSON("utilities/timeSeries2.json", function (data) {
         var result = [];
-        var color = "#1DAB0A";
+        var color = "red";
 
         for (var i in data)
             result.push([data[i]]);
