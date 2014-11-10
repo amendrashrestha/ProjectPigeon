@@ -70,8 +70,9 @@ function functionWordGraph() {
 
         for (var i in data)
             result.push([data[i]]);
-
+//        alert(result);
         var user = "User " + result[0];
+//        alert(user);
         
         var result1 = result.splice(1, 293);
         drawChart(result1, user, color);

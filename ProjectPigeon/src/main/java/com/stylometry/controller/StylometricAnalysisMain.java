@@ -360,17 +360,23 @@ public class StylometricAnalysisMain {
      */
     public ArrayList<Float> countFunctionWords(List<String> words) {
         ArrayList<Float> tmpCounter = new ArrayList<>(Collections.nCopies(functionWords.size(), 0.0f));	// Initialize to zero
+        int funWordCount = 0;
         for (String word : words) {
             if (functionWords.contains(word)) {
                 int place = functionWords.indexOf(word);
                 float value = tmpCounter.get(place);
                 value++;
                 tmpCounter.set(place, value);
+                funWordCount++;
             }
+        }
+        if(funWordCount == 0){
+            funWordCount = 1;
         }
         // "Normalize" the values by dividing with length of the post (nr of words in the post)
         for (int i = 0; i < tmpCounter.size(); i++) {
-            tmpCounter.set(i, tmpCounter.get(i) / (float) words.size());
+//            tmpCounter.set(i, tmpCounter.get(i) / (float) words.size());
+            tmpCounter.set(i, tmpCounter.get(i) / (float) funWordCount);
         }
         return tmpCounter;
     }

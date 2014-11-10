@@ -55,7 +55,7 @@
                             <form action="rest/generic/returnStylometricJSON" method="post">
                                 <table>
                                     <tr>
-                                        <td><textarea name="posts" ROWS="15" COLS="100" onclick="this.value = '';">This is a little test.</textarea>
+                                        <td><textarea name="posts" ROWS="15" COLS="100" onclick="this.value = '';">Please write a text.</textarea>
                                         </td>
                                     </tr>
                                     <tr>
